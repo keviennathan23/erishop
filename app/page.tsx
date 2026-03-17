@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ShoppingCart, Trash2 } from "lucide-react";
 
 export default function EriShopWebsite() {
@@ -97,9 +97,20 @@ export default function EriShopWebsite() {
 const [name, setName] = useState("");
 const [comment, setComment] = useState("");
 
+// LOAD dari localStorage saat pertama kali buka
+useEffect(() => {
+  const savedTestimonials = localStorage.getItem("testimonials");
+  if (savedTestimonials) {
+    setTestimonials(JSON.parse(savedTestimonials));
+  }
+}, []);
+
+useEffect(() => {
+  localStorage.setItem("testimonials", JSON.stringify(testimonials));
+}, [testimonials]);
 // Fungsi tambah testimoni
 const addTestimonial = () => {
-  if (!name || !comment) return; // Jangan tambah kalau kosong
+  if (!name.trim() || !comment.trim()) return;
 
   const newTestimonial = { name, comment };
 

@@ -89,44 +89,53 @@ export default function EriShopWebsite() {
       images: ["/Totebag6.png"],
     },
   ];
- const [testimonials, setTestimonials] = useState([
-  { name: "Andi Pratama", comment: "Kaosnya keren banget!" },
-  { name: "Sinta Lestari", comment: "Totebagnya bagus dan bahannya tebal." },
-]);
+  const [testimonials, setTestimonials] = useState([
+    { name: "Andi Pratama", comment: "Kaosnya keren banget!", rating: 5 },
+    { name: "Sinta Lestari", comment: "Totebagnya bagus!", rating: 4 },
+  ]);
 
-const [name, setName] = useState("");
-const [comment, setComment] = useState("");
+  const [name, setName] = useState("");
+  const [comment, setComment] = useState("");
+  const [rating, setRating] = useState(5);
 
-// LOAD dari localStorage saat pertama kali buka
-useEffect(() => {
-  const savedTestimonials = localStorage.getItem("testimonials");
-  if (savedTestimonials) {
-    setTestimonials(JSON.parse(savedTestimonials));
-  }
-}, []);
+  useEffect(() => {
+    fetch("/api/testimonials")
+      .then((res) => res.json())
+      .then((data) => setTestimonials(data));
+  }, []);
 
-useEffect(() => {
-  localStorage.setItem("testimonials", JSON.stringify(testimonials));
-}, [testimonials]);
-// Fungsi tambah testimoni
-const addTestimonial = () => {
-  if (!name.trim() || !comment.trim()) return;
+  //fungsi tambah testimoni
+  const addTestimonial = async () => {
+    if (!name.trim() || !comment.trim()) return;
 
-  const newTestimonial = { name, comment };
+    await fetch("/api/testimonials", {
+      method: "POST",
+      body: JSON.stringify({ name, comment, rating }),
+    });
 
-  setTestimonials([...testimonials, newTestimonial]); // Update state
-  setName(""); // Reset input
-  setComment(""); // Reset textarea
-};
+    setName("");
+    setComment("");
 
-// Fungsi hapus testimoni
-const deleteTestimonial = (index: number) => {
-  const confirmDelete = confirm("Apakah kamu yakin ingin menghapus testimoni ini?");
-  if (!confirmDelete) return;
+    // reload data
+    const res = await fetch("/api/testimonials");
+    const data = await res.json();
+    setTestimonials(data);
+  };
 
-  const newTestimonials = testimonials.filter((_, i) => i !== index);
-  setTestimonials(newTestimonials);
-};
+  // Fungsi hapus testimoni
+  const deleteTestimonial = async (index: number) => {
+    const confirmDelete = confirm("Yakin hapus?");
+    if (!confirmDelete) return;
+
+    await fetch("/api/testimonials", {
+      method: "DELETE",
+      body: JSON.stringify({ index }),
+    });
+
+    const res = await fetch("/api/testimonials");
+    const data = await res.json();
+    setTestimonials(data);
+  };
   const addToCart = (product: any) => {
     setCart([...cart, product]);
   };
@@ -226,26 +235,110 @@ Terima kasih 🙏
       <section id="karya" className="py-16 px-6">
         <div className="max-w-6xl mx-auto text-center">
           <h3 className="text-2xl font-semibold mb-10">Karya Erry</h3>
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-white p-6 rounded-2xl shadow">
-              <h4 className="font-semibold mb-2">Ilustrasi Original</h4>
-              <p className="text-sm text-black-600">
-                Gambar karakter unik dengan warna ekspresif dan penuh makna.
-              </p>
-            </div>
-            <div className="bg-white p-6 rounded-2xl shadow">
-              <h4 className="font-semibold mb-2">Merchandise Artwork</h4>
-              <p className="text-sm text-black-600">
-                Kaos, totebag, tumbler, dan notebook desain eksklusif.
-              </p>
-            </div>
-            <div className="bg-white p-6 rounded-2xl shadow">
-              <h4 className="font-semibold mb-2">Custom Design</h4>
-              <p className="text-sm text-black-600">
-                Pesanan desain khusus untuk event atau komunitas.
-              </p>
-            </div>
+
+          {/* (Optional) kalau mau slider karya */}
+          <div className="flex gap-6 overflow-x-auto pb-4">
+            {/* isi gambar karya kalau mau */}
           </div>
+
+          {/* KATEGORI */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <img
+              src="/lukisan1.png"
+              className="w-full h-40 object-cover rounded-lg"
+            />
+            <img
+              src="/lukisan2.png"
+              className="w-full h-40 object-cover rounded-lg"
+            />
+            <img
+              src="/lukisan3.png"
+              className="w-full h-40 object-cover rounded-lg"
+            />
+            <img
+              src="/lukisan4.png"
+              className="w-full h-40 object-cover rounded-lg"
+            />
+            <img
+              src="/lukisan5.png"
+              className="w-full h-40 object-cover rounded-lg"
+            />
+            <img
+              src="/lukisan6.png"
+              className="w-full h-40 object-cover rounded-lg"
+            />
+            <img
+              src="/lukisan7.png"
+              className="w-full h-40 object-cover rounded-lg"
+            />
+            <img
+              src="/lukisan8.png"
+              className="w-full h-40 object-cover rounded-lg"
+            />
+            <img
+              src="/lukisan9.png"
+              className="w-full h-40 object-cover rounded-lg"
+            />
+            <img
+              src="/lukisan10.png"
+              className="w-full h-40 object-cover rounded-lg"
+            />
+            <img
+              src="/lukisan11.png"
+              className="w-full h-40 object-cover rounded-lg"
+            />
+            <img
+              src="/lukisan12.png"
+              className="w-full h-40 object-cover rounded-lg"
+            />
+            <img
+              src="/lukisan13.png"
+              className="w-full h-40 object-cover rounded-lg"
+            />
+            <img
+              src="/lukisan14.png"
+              className="w-full h-40 object-cover rounded-lg"
+            />
+            <img
+              src="/lukisan15.png"
+              className="w-full h-40 object-cover rounded-lg"
+            />
+            <img
+              src="/lukisan16.png"
+              className="w-full h-40 object-cover rounded-lg"
+            />
+            <img
+              src="/lukisan17.png"
+              className="w-full h-40 object-cover rounded-lg"
+            />
+            <img
+              src="/lukisan18.png"
+              className="w-full h-40 object-cover rounded-lg"
+            />
+            <img
+              src="/lukisan19.png"
+              className="w-full h-40 object-cover rounded-lg"
+            />
+          </div>
+
+          <h4 className="font-semibold mb-2">Ilustrasi Original</h4>
+          <p className="text-sm text-gray-600">
+            Gambar karakter unik dengan warna ekspresif dan penuh makna.
+          </p>
+        </div>
+
+        <div className="bg-white p-6 rounded-2xl shadow">
+          <h4 className="font-semibold mb-2">Merchandise Artwork</h4>
+          <p className="text-sm text-gray-600">
+            Kaos, totebag, tumbler, dan notebook desain eksklusif.
+          </p>
+        </div>
+
+        <div className="bg-white p-6 rounded-2xl shadow">
+          <h4 className="font-semibold mb-2">Custom Design</h4>
+          <p className="text-sm text-gray-600">
+            Pesanan desain khusus untuk event atau komunitas.
+          </p>
         </div>
       </section>
 
@@ -279,15 +372,12 @@ Terima kasih 🙏
                     />
                   ))}
                 </div>
-
                 <h4 className="font-semibold mb-2">{product.title}</h4>
-
                 <p className="text-sm text-gray-600 mb-2">{product.desc}</p>
-
                 <p className="font-bold mb-4">
                   Rp {product.price.toLocaleString("id-ID")}
                 </p>
-
+               
                 <button
                   onClick={() => addToCart(product)}
                   className="w-full bg-blue-500 text-white py-2 rounded-xl"
@@ -360,67 +450,85 @@ Terima kasih 🙏
           </ul>
         </div>
       </section>
-     {/* TESTIMONI */}
-<section className="max-w-6xl mx-auto px-6 py-16">
+      {/* TESTIMONI */}
+      <section className="max-w-6xl mx-auto px-6 py-16">
+        <h2 className="text-3xl font-bold text-center mb-10">
+          Testimoni Pembeli
+        </h2>
 
-  <h2 className="text-3xl font-bold text-center mb-10">
-    Testimoni Pembeli
-  </h2>
+        {/* FORM */}
+        <div className="max-w-md mx-auto mb-10 space-y-3">
+          <input
+            type="text"
+            placeholder="Nama kamu"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="w-full border rounded-lg p-2"
+          />
+          <select
+            value={rating}
+            onChange={(e) => setRating(Number(e.target.value))}
+            className="w-full border rounded-lg p-2"
+          >
+            <option value={5}>⭐⭐⭐⭐⭐ (5)</option>
+            <option value={4}>⭐⭐⭐⭐ (4)</option>
+            <option value={3}>⭐⭐⭐ (3)</option>
+            <option value={2}>⭐⭐ (2)</option>
+            <option value={1}>⭐ (1)</option>
+          </select>
 
-  {/* FORM TESTIMONI */}
-  <div className="max-w-md mx-auto mb-10 space-y-3">
-    <input
-      type="text"
-      placeholder="Nama kamu"
-      value={name}
-      onChange={(e) => setName(e.target.value)}
-      className="w-full border rounded-lg p-2"
-    />
+          <textarea
+            placeholder="Tulis testimoni..."
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            className="w-full border rounded-lg p-2"
+          />
 
-    <textarea
-      placeholder="Tulis testimoni..."
-      value={comment}
-      onChange={(e) => setComment(e.target.value)}
-      className="w-full border rounded-lg p-2"
-    />
+          <button
+            onClick={addTestimonial}
+            className="bg-orange-500 text-white px-4 py-2 rounded-lg w-full"
+          >
+            Kirim Testimoni
+          </button>
+        </div>
 
-    <button
-      onClick={addTestimonial}
-      className="bg-orange-500 text-white px-4 py-2 rounded-lg w-full"
-    >
-      Kirim Testimoni
-    </button>
-  </div>
+        {/* LIST TESTIMONI */}
+        <div className="flex gap-6 overflow-x-auto pb-4">
+          {testimonials.map((item, i) => (
+            <div
+              key={i}
+              className="min-w-[250px] bg-white shadow-lg rounded-xl p-6 text-center relative flex-shrink-0"
+            >
+              {/* ⭐ BINTANG */}
+              <div className="mb-2">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <span
+                    key={star}
+                    className={`text-lg ${
+                      star <= (item.rating || 5)
+                        ? "text-yellow-400"
+                        : "text-gray-300"
+                    }`}
+                  >
+                    ★
+                  </span>
+                ))}
+              </div>
 
-  {/* LIST TESTIMONI */}
-  <div className="grid md:grid-cols-3 gap-8">
-    {testimonials.map((item, i) => (
-  <div
-    key={i}
-    className="bg-white shadow-lg rounded-xl p-6 text-center relative"
-  >
-    <p className="text-yellow-400 text-lg mb-2">★★★★★</p>
+              <p className="text-gray-600 italic mb-4">"{item.comment}"</p>
 
-    <p className="text-gray-600 italic mb-4">
-      "{item.comment}"
-    </p>
+              <h4 className="font-semibold text-gray-800">{item.name}</h4>
 
-    <h4 className="font-semibold text-gray-800">
-      {item.name}
-    </h4>
-
-    {/* Tombol hapus */}
-    <button
-      onClick={() => deleteTestimonial(i)}
-      className="absolute top-2 right-2 text-red-500 font-bold"
-    >
-      ✕
-    </button>
-  </div>
-))}
-  </div>
-
-</section>
+              <button
+                onClick={() => deleteTestimonial(i)}
+                className="absolute top-2 right-2 text-red-500 font-bold"
+              >
+                ✕
+              </button>
+            </div>
+          ))}
+        </div>
+      </section>
 
       <footer className="bg-gray-900 text-gray-300 mt-16">
         <div className="max-w-6xl mx-auto px-6 py-10 grid md:grid-cols-3 gap-8">

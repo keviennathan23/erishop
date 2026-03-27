@@ -224,9 +224,10 @@ Terima kasih 🙏
         <div className="max-w-4xl mx-auto text-center">
           <h3 className="text-2xl font-semibold mb-4">Profil Erry</h3>
           <p className="text-black-600 leading-relaxed">
-            Erry adalah seniman berbakat yang mengekspresikan iman, imajinasi,
-            dan perjalanan hidup melalui ilustrasi penuh warna dan makna.
-            Karyanya membawa pesan harapan dan inspirasi.
+            Erry mungkin tidak selalu bercerita dengan kata-kata, tapi lewat
+            gambar, ia berbicara begitu dalam. Setiap desain adalah cerita.
+            Setiap produk adalah harapan. Pakai karya Erry, dan jadilah bagian
+            dari perjalanan indah ini 💛
           </p>
         </div>
       </section>
@@ -377,7 +378,7 @@ Terima kasih 🙏
                 <p className="font-bold mb-4">
                   Rp {product.price.toLocaleString("id-ID")}
                 </p>
-               
+
                 <button
                   onClick={() => addToCart(product)}
                   className="w-full bg-blue-500 text-white py-2 rounded-xl"

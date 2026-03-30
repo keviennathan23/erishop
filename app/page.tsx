@@ -6,86 +6,106 @@ import { ShoppingCart, Trash2 } from "lucide-react";
 export default function EriShopWebsite() {
   const [cart, setCart] = useState<any[]>([]);
   const [search, setSearch] = useState("");
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  const [qty, setQty] = useState(1);
+  const [showNotif, setShowNotif] = useState(false);
+  const images = [
+    "/lukisan1.png",
+    "/lukisan2.png",
+    "/lukisan3.png",
+    "/lukisan4.png",
+    "/lukisan5.png",
+    "/lukisan6.png",
+    "/lukisan7.png",
+    "/lukisan8.png",
+    "/lukisan9.png",
+    "/lukisan10.png",
+    "/lukisan11.png",
+    "/lukisan12.png",
+    "/lukisan13.png",
+    "/lukisan14.png",
+    "/lukisan15.png",
+    "/lukisan16.png",
+    "/lukisan17.png",
+    "/lukisan18.png",
+    "/lukisan19.png",
+  ];
 
   const whatsappNumber = "628124627770";
 
   const products = [
     {
       id: 1,
-      title: "Kaos Art Erry 1",
-      desc: "Kaos premium artwork Erry.",
+      title: "T-shirt Love God",
+      desc: "Premium T-shirt with exclusive artwork by Erry.",
       price: 185000,
-      images: ["/Kaos1.png", "/Kaos1b.png"],
+      images: ["/love_god.png"],
     },
     {
       id: 2,
-      title: "Kaos Art Erry 2",
-      desc: "Kaos premium artwork Erry.",
+      title: "T-shirt He Is Reason",
+      desc: "Premium T-shirt with exclusive artwork by Erry.",
       price: 185000,
-      images: ["/Kaos2.png", "/Kaos2b.png"],
+      images: ["/he_is_reason.png"],
     },
     {
       id: 3,
-      title: "Kaos Art Erry 3",
-      desc: "Kaos premium artwork Erry.",
+      title: "T-shirt I Am Happy",
+      desc: "Premium T-shirt with exclusive artwork by Erry.",
       price: 185000,
-      images: ["/Kaos3.png", "/Kaos3b.png"],
+      images: ["/iam_happy.png"],
     },
     {
       id: 4,
-      title: "Kaos Art Erry 4",
-      desc: "Kaos premium artwork Erry.",
+      title: "T-shirt Creation Day",
+      desc: "Premium T-shirt with exclusive artwork by Erry.",
       price: 185000,
-      images: ["/Kaos4.png", "/Kaos4b.png"],
+      images: ["/creation_day.png"],
     },
     {
       id: 5,
-      title: "Kaos Art Erry 5",
-      desc: "Kaos premium artwork Erry.",
+      title: "T-shirt Save The Earth",
+      desc: "Premium T-shirt with exclusive artwork by Erry.",
       price: 185000,
-      images: ["/Kaos5.png", "/Kaos5b.png"],
+      images: ["/save_the_earth.png"],
     },
-    {
-      id: 6,
-      title: "Kaos Art Erry 6",
-      desc: "Kaos premium artwork Erry.",
-      price: 185000,
-      images: ["/Kaos6.png", "/Kaos6b.png"],
-    },
-    // TOTEBAG
+
+    // TOTEBAG (RENAME SESUAI REQUEST)
     {
       id: 7,
-      title: "Totebag Artwork 1",
-      desc: "Totebag eco-friendly desain Erry.",
-      price: 150000,
-      images: ["/Totebag1.png", "/Totebag2.png"],
+      title: "Sling Bag Japanese Girl",
+      desc: "Eco-friendly sling bag with original artwork by Erry.",
+      price: 250000,
+      images: ["/SlingBag2.png"],
     },
     {
       id: 8,
-      title: "Totebag Artwork 3",
-      desc: "Totebag eco-friendly desain Erry.",
-      price: 150000,
-      images: ["/Totebag3.png"],
+      title: "Sling Bag Sweet Couple",
+      desc: "Eco-friendly sling bag with original artwork by Erry.",
+      price: 250000,
+      images: ["/SlingBag1.png"],
     },
     {
       id: 9,
-      title: "Totebag Artwork 4",
-      desc: "Totebag eco-friendly desain Erry.",
-      price: 150000,
+      title: "Totebag Cute",
+      desc: "Eco-friendly totebag with original artwork by Erry.",
+      price: 50000,
       images: ["/Totebag4.png"],
     },
     {
       id: 10,
-      title: "Totebag Artwork 5",
-      desc: "Totebag eco-friendly desain Erry.",
-      price: 150000,
+      title: "Totebag Do It",
+      desc: "Eco-friendly totebag with original artwork by Erry.",
+      price: 50000,
       images: ["/Totebag5.png"],
     },
     {
       id: 11,
-      title: "Totebag Artwork 6",
-      desc: "Totebag eco-friendly desain Erry.",
-      price: 150000,
+      title: "Totebag Never Stop Trying",
+      desc: "Eco-friendly totebag with original artwork by Erry.",
+      price: 50000,
       images: ["/Totebag6.png"],
     },
   ];
@@ -102,6 +122,13 @@ export default function EriShopWebsite() {
     fetch("/api/testimonials")
       .then((res) => res.json())
       .then((data) => setTestimonials(data));
+  }, []);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+    }, 2500);
+
+    return () => clearInterval(interval);
   }, []);
 
   //fungsi tambah testimoni
@@ -138,6 +165,11 @@ export default function EriShopWebsite() {
   };
   const addToCart = (product: any) => {
     setCart([...cart, product]);
+    setShowNotif(true);
+
+    setTimeout(() => {
+      setShowNotif(false);
+    }, 2000);
   };
 
   const removeFromCart = (index: number) => {
@@ -210,136 +242,106 @@ Terima kasih 🙏
         className="absolute bottom-0 right-0 w-53 opacity-60 brightness-125"
       />
 
-      {/* HERO */}
-      <section className="text-center py-20 px-6">
-        <h2 className="text-4xl font-bold mb-6">Setiap Karya Punya Cerita</h2>
-        <p className="text-black-600 max-w-2xl mx-auto">
-          ERISHOP adalah platform resmi untuk menampilkan dan menjual karya
-          inspiratif dari Erry.
+      <section className="py-20 px-6 text-center">
+        <h2 className="text-4xl font-bold mb-6">Every Creation Has a Story</h2>
+
+        <p className="text-black-700 max-w-2xl mx-auto leading-relaxed mb-10">
+          Discover meaningful fashion at ERISHOP — where art meets purpose.
+          Designed by Erry, each product transforms original artwork into
+          stylish, wearable pieces for everyday use.
+        </p>
+
+        {/* FOTO PROFIL */}
+        <div className="flex justify-center gap-4 mb-8 flex-wrap">
+          <img
+            src="/ProfilErry.png"
+            className="w-52 h-52 object-cover rounded-full shadow-lg"
+          />
+          <img
+            src="/ProfilErry1.png"
+            className="w-52 h-52 object-cover rounded-full shadow-lg"
+          />
+        </div>
+
+        {/* VALUE */}
+        <div className="max-w-xl mx-auto text-left mb-8">
+          <h4 className="font-semibold mb-3 text-lg text-center">
+            Why Erry’s Creations Are Special
+          </h4>
+
+          <ul className="space-y-2 text-sm">
+            <li>🎨 Original hand-drawn designs</li>
+            <li>💛 Created with authenticity</li>
+            <li>👕 Available on T-shirts, tote bags, and more</li>
+            <li>🌟 Supporting creativity and independence</li>
+          </ul>
+        </div>
+
+        {/* TAGLINE */}
+        <p className="font-semibold text-lg">
+          Wear something different. <br />
+          Wear something meaningful. <br />
+          Wear Erry’s world.
         </p>
       </section>
 
-      {/* PROFIL */}
-      <section id="profil" className="py-16 px-6">
-        <div className="max-w-4xl mx-auto text-center">
-          <h3 className="text-2xl font-semibold mb-4">Profil Erry</h3>
-          <p className="text-black-600 leading-relaxed">
-            Erry mungkin tidak selalu bercerita dengan kata-kata, tapi lewat
-            gambar, ia berbicara begitu dalam. Setiap desain adalah cerita.
-            Setiap produk adalah harapan. Pakai karya Erry, dan jadilah bagian
-            dari perjalanan indah ini 💛
-          </p>
-        </div>
-      </section>
-
       {/* KARYA */}
-      <section id="karya" className="py-16 px-6">
+      <section id="karya" className="py-20 px-6">
         <div className="max-w-6xl mx-auto text-center">
-          <h3 className="text-2xl font-semibold mb-10">Karya Erry</h3>
+          {/* TITLE */}
+          <h3 className="text-3xl font-bold mb-4">Original Illustration</h3>
 
-          {/* (Optional) kalau mau slider karya */}
-          <div className="flex gap-6 overflow-x-auto pb-4">
-            {/* isi gambar karya kalau mau */}
+          <p className="text-gray-700 max-w-xl mx-auto mb-12">
+            Step into a world of imagination through unique character
+            illustrations. Each piece is rich in color, emotion, and
+            meaning—telling stories beyond words.
+          </p>
+
+          {/* SLIDER */}
+          <div className="flex justify-center items-center mb-12">
+            <div
+              onClick={() => setSelectedImage(images[currentIndex])}
+              className="w-[320px] h-64 relative rounded-2xl overflow-hidden shadow-xl cursor-pointer group hover:scale-105 transition duration-300"
+            >
+              <img
+                src={images[currentIndex]}
+                onError={(e) => {
+                  e.currentTarget.src = "/error.png";
+                }}
+                className="w-full h-full object-cover"
+              />
+
+              <div className="absolute inset-0 bg-black/40 flex flex-col justify-end p-4 text-white opacity-0 group-hover:opacity-100 transition">
+                <h4 className="text-lg font-bold">View Artwork</h4>
+                <p className="text-sm">Click to explore 🔍</p>
+              </div>
+            </div>
           </div>
 
-          {/* KATEGORI */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            <img
-              src="/lukisan1.png"
-              className="w-full h-40 object-cover rounded-lg"
-            />
-            <img
-              src="/lukisan2.png"
-              className="w-full h-40 object-cover rounded-lg"
-            />
-            <img
-              src="/lukisan3.png"
-              className="w-full h-40 object-cover rounded-lg"
-            />
-            <img
-              src="/lukisan4.png"
-              className="w-full h-40 object-cover rounded-lg"
-            />
-            <img
-              src="/lukisan5.png"
-              className="w-full h-40 object-cover rounded-lg"
-            />
-            <img
-              src="/lukisan6.png"
-              className="w-full h-40 object-cover rounded-lg"
-            />
-            <img
-              src="/lukisan7.png"
-              className="w-full h-40 object-cover rounded-lg"
-            />
-            <img
-              src="/lukisan8.png"
-              className="w-full h-40 object-cover rounded-lg"
-            />
-            <img
-              src="/lukisan9.png"
-              className="w-full h-40 object-cover rounded-lg"
-            />
-            <img
-              src="/lukisan10.png"
-              className="w-full h-40 object-cover rounded-lg"
-            />
-            <img
-              src="/lukisan11.png"
-              className="w-full h-40 object-cover rounded-lg"
-            />
-            <img
-              src="/lukisan12.png"
-              className="w-full h-40 object-cover rounded-lg"
-            />
-            <img
-              src="/lukisan13.png"
-              className="w-full h-40 object-cover rounded-lg"
-            />
-            <img
-              src="/lukisan14.png"
-              className="w-full h-40 object-cover rounded-lg"
-            />
-            <img
-              src="/lukisan15.png"
-              className="w-full h-40 object-cover rounded-lg"
-            />
-            <img
-              src="/lukisan16.png"
-              className="w-full h-40 object-cover rounded-lg"
-            />
-            <img
-              src="/lukisan17.png"
-              className="w-full h-40 object-cover rounded-lg"
-            />
-            <img
-              src="/lukisan18.png"
-              className="w-full h-40 object-cover rounded-lg"
-            />
-            <img
-              src="/lukisan19.png"
-              className="w-full h-40 object-cover rounded-lg"
-            />
+          {/* BOX BAWAH */}
+          <div className="grid md:grid-cols-2 gap-6">
+            {/* MERCH */}
+            <div className="bg-white p-8 rounded-2xl shadow border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition text-center">
+              <h4 className="font-semibold mb-3 text-lg">
+                🎨 Merchandise Artwork
+              </h4>
+
+              <p className="text-sm text-gray-600 leading-relaxed">
+                Exclusive designs available on T-shirts, tote bags, tumblers,
+                and notebooks — turning art into stylish everyday essentials.
+              </p>
+            </div>
+
+            {/* CUSTOM */}
+            <div className="bg-white p-8 rounded-2xl shadow border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition text-center">
+              <h4 className="font-semibold mb-3 text-lg">✨ Custom Design</h4>
+
+              <p className="text-sm text-gray-600 leading-relaxed">
+                Personalized design services for events, communities, and
+                special occasions — crafted to match your unique identity.
+              </p>
+            </div>
           </div>
-
-          <h4 className="font-semibold mb-2">Ilustrasi Original</h4>
-          <p className="text-sm text-gray-600">
-            Gambar karakter unik dengan warna ekspresif dan penuh makna.
-          </p>
-        </div>
-
-        <div className="bg-white p-6 rounded-2xl shadow">
-          <h4 className="font-semibold mb-2">Merchandise Artwork</h4>
-          <p className="text-sm text-gray-600">
-            Kaos, totebag, tumbler, dan notebook desain eksklusif.
-          </p>
-        </div>
-
-        <div className="bg-white p-6 rounded-2xl shadow">
-          <h4 className="font-semibold mb-2">Custom Design</h4>
-          <p className="text-sm text-gray-600">
-            Pesanan desain khusus untuk event atau komunitas.
-          </p>
         </div>
       </section>
 
@@ -364,12 +366,20 @@ Terima kasih 🙏
                 key={product.id}
                 className="bg-blue-50 p-6 rounded-2xl shadow"
               >
-                <div className="flex gap-2 mb-4">
+                <div
+                  className={`mb-4 ${
+                    product.images.length === 1 ? "" : "grid grid-cols-2 gap-2"
+                  }`}
+                >
                   {product.images.map((img, index) => (
                     <img
                       key={index}
                       src={img}
-                      className="w-1/2 h-40 object-cover rounded-xl"
+                      className={`rounded-xl object-cover ${
+                        product.images.length === 1
+                          ? "w-full h-56"
+                          : "w-full h-40"
+                      }`}
                     />
                   ))}
                 </div>
@@ -380,7 +390,10 @@ Terima kasih 🙏
                 </p>
 
                 <button
-                  onClick={() => addToCart(product)}
+                  onClick={() => {
+                    setSelectedProduct(product);
+                    setQty(1);
+                  }}
                   className="w-full bg-blue-500 text-white py-2 rounded-xl"
                 >
                   Tambah ke Keranjang
@@ -440,56 +453,63 @@ Terima kasih 🙏
       <section id="marketing" className="py-16 px-6">
         <div className="max-w-4xl mx-auto text-center">
           <h3 className="text-2xl font-semibold mb-6">
-            Strategi Jual & Promo Online
+            Our Story, Our Movement
           </h3>
           <ul className="text-black-600 space-y-3 text-left">
-            <li>• Posting rutin di Instagram & TikTok</li>
-            <li>• storytelling tentang perjalanan Erry</li>
-            <li>• Buat limited edition</li>
-            <li>• Kolaborasi komunitas</li>
-            <li>• Giveaway & promo launching</li>
+            This is more than a brand—it’s a journey.
+            <li>• Sharing authentic stories through art </li>
+            <li>• Building connection through creativity </li>
+            <li>• Releasing limited editions to keep every piece special </li>
+            <li>• Collaborating with communities that believe in inclusion </li>
+            <li>• Celebrating every milestone with you </li>
           </ul>
         </div>
       </section>
       {/* TESTIMONI */}
       <section className="max-w-6xl mx-auto px-6 py-16">
-        <h2 className="text-3xl font-bold text-center mb-10">
-          Testimoni Pembeli
-        </h2>
+        <h3 className="text-3xl font-bold text-center mb-4">
+          What People Are Saying
+        </h3>
+
+        <p className="text-center text-gray-600 max-w-xl mx-auto mb-10">
+          Every purchase has a story. Every customer is part of the journey.
+          Share your experience and inspire others 💛
+        </p>
 
         {/* FORM */}
-        <div className="max-w-md mx-auto mb-10 space-y-3">
+        <div className="max-w-md mx-auto mb-10 space-y-4">
           <input
             type="text"
-            placeholder="Nama kamu"
+            placeholder="Your name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full border rounded-lg p-2"
+            className="w-full border rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
+
           <select
             value={rating}
             onChange={(e) => setRating(Number(e.target.value))}
-            className="w-full border rounded-lg p-2"
+            className="w-full border rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
           >
-            <option value={5}>⭐⭐⭐⭐⭐ (5)</option>
-            <option value={4}>⭐⭐⭐⭐ (4)</option>
-            <option value={3}>⭐⭐⭐ (3)</option>
-            <option value={2}>⭐⭐ (2)</option>
-            <option value={1}>⭐ (1)</option>
+            <option value={5}>⭐⭐⭐⭐⭐ 5</option>
+            <option value={4}>⭐⭐⭐⭐ 4</option>
+            <option value={3}>⭐⭐⭐ 3</option>
+            <option value={2}>⭐⭐ 2</option>
+            <option value={1}>⭐ 1</option>
           </select>
 
           <textarea
-            placeholder="Tulis testimoni..."
+            placeholder="Share your thoughts..."
             value={comment}
             onChange={(e) => setComment(e.target.value)}
-            className="w-full border rounded-lg p-2"
+            className="w-full border rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
 
           <button
             onClick={addTestimonial}
-            className="bg-orange-500 text-white px-4 py-2 rounded-lg w-full"
+            className="bg-orange-500 text-white px-4 py-3 rounded-xl w-full hover:bg-orange-600 transition"
           >
-            Kirim Testimoni
+            Submit Review
           </button>
         </div>
 
@@ -531,11 +551,11 @@ Terima kasih 🙏
         </div>
       </section>
 
-      <footer className="bg-gray-900 text-gray-300 mt-16">
-        <div className="max-w-6xl mx-auto px-6 py-10 grid md:grid-cols-3 gap-8">
+      <footer className="bg-gray-900 text-gray-300 mt-20">
+        <div className="max-w-6xl mx-auto px-6 py-12 grid md:grid-cols-3 gap-10">
           {/* Brand */}
           <div>
-            <div className="flex items-center gap-3 mb-3">
+            <div className="flex items-center gap-3 mb-4">
               <img
                 src="/Logo.png"
                 alt="ERISHOP Logo"
@@ -544,54 +564,185 @@ Terima kasih 🙏
               <h2 className="text-xl font-bold text-blue-500">ERISHOP</h2>
             </div>
 
-            <p className="text-sm">
-              ERISHOP adalah platform resmi untuk menampilkan dan menjual karya
-              artwork dari Erry. Setiap produk dibuat dengan konsep seni yang
-              unik dan eksklusif.
+            <p className="text-sm leading-relaxed text-gray-400">
+              ERISHOP is the official platform showcasing and selling original
+              artwork by Erry. Each product is crafted with unique artistic
+              concepts and meaningful design.
             </p>
           </div>
 
           {/* Menu */}
           <div>
-            <h3 className="font-semibold text-white mb-3">Menu</h3>
+            <h3 className="font-semibold text-white mb-4">Explore</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <a href="#profil" className="hover:text-orange-400">
-                  Profil
+                <a href="#home" className="hover:text-orange-400 transition">
+                  Home
                 </a>
               </li>
               <li>
-                <a href="#karya" className="hover:text-orange-400">
-                  Karya
+                <a href="#karya" className="hover:text-orange-400 transition">
+                  Artwork
                 </a>
               </li>
               <li>
-                <a href="#produk" className="hover:text-orange-400">
-                  Produk
+                <a href="#produk" className="hover:text-orange-400 transition">
+                  Products
                 </a>
               </li>
               <li>
-                <a href="#marketing" className="hover:text-orange-400">
-                  Marketing
+                <a
+                  href="#marketing"
+                  className="hover:text-orange-400 transition"
+                >
+                  Our Story
                 </a>
               </li>
             </ul>
           </div>
 
-          {/* Kontak */}
+          {/* Contact */}
           <div>
-            <h3 className="font-semibold text-white mb-3">Kontak</h3>
-            <p className="text-sm">WhatsApp: +62 812-4627-7770</p>
-            <p className="text-sm">Email: erishop.art@gmail.com</p>
-            <p className="text-sm">Instagram: @erishop.art</p>
+            <h3 className="font-semibold text-white mb-4">Contact</h3>
+
+            <div className="flex flex-col gap-4 text-sm">
+              <a
+                href="https://wa.me/628124627770"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-orange-400 transition"
+              >
+                  <img src="/whatsapp.png" className="w-6 h-6" /><span>WhatsApp</span>
+              </a>
+
+              <a
+                href="mailto:erishop.art@gmail.com"
+                className="hover:text-orange-400 transition"
+              >
+                ✉️ Email
+              </a>
+
+              <a
+                href="https://www.instagram.com/erishop.art/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-orange-400 transition"
+              >
+                <img src="/instagram.png" className="w-6 h-6" /><span>Instagram</span>
+              </a>
+            </div>
           </div>
         </div>
 
-        {/* Copyright */}
-        <div className="border-t border-gray-700 text-center py-4 text-sm">
-          © {new Date().getFullYear()} ERISHOP — Artwork by Erry
+        {/* Bottom */}
+        <div className="border-t border-gray-700 text-center py-4 text-sm text-gray-500">
+          © {new Date().getFullYear()} ERISHOP — Designed with 💛 by Erry
         </div>
       </footer>
+      {/* POPUP GAMBAR */}
+      {selectedImage && (
+        <div
+          className="fixed inset-0 bg-black/80 flex items-center justify-center z-50"
+          onClick={() => setSelectedImage(null)}
+        >
+          <img
+            src={selectedImage}
+            className="max-w-[90%] max-h-[90%] rounded-xl shadow-2xl"
+          />
+        </div>
+      )}
+      {selectedProduct && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-6 w-[90%] max-w-md relative">
+            {/* CLOSE */}
+            <button
+              onClick={() => setSelectedProduct(null)}
+              className="absolute top-3 right-3 text-xl"
+            >
+              ✕
+            </button>
+
+            {/* IMAGE */}
+            <img
+              src={selectedProduct.images[0]}
+              className="w-full max-h-[300px] object-contain rounded-xl mb-4 bg-gray-100"
+            />
+
+            {/* INFO */}
+            <h3 className="text-xl font-bold mb-2">{selectedProduct.title}</h3>
+            <p className="text-gray-600 mb-2">{selectedProduct.desc}</p>
+            <p className="font-bold mb-4">
+              Rp {selectedProduct.price.toLocaleString("id-ID")}
+            </p>
+
+            {/* QTY */}
+            <div className="flex items-center gap-3 mb-4">
+              <button
+                onClick={() => setQty(qty > 1 ? qty - 1 : 1)}
+                className="px-3 py-1 bg-gray-200 rounded"
+              >
+                -
+              </button>
+
+              <span>{qty}</span>
+
+              <button
+                onClick={() => setQty(qty + 1)}
+                className="px-3 py-1 bg-gray-200 rounded"
+              >
+                +
+              </button>
+            </div>
+
+            {/* BUTTON */}
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  for (let i = 0; i < qty; i++) {
+                    addToCart(selectedProduct);
+                  }
+                  setSelectedProduct(null);
+                }}
+                className="flex-1 bg-blue-500 text-white py-2 rounded-xl"
+              >
+                + Keranjang
+              </button>
+
+              <button
+                onClick={() => {
+                  const message = `
+Halo ERISHOP 👋
+
+Saya ingin memesan:
+${selectedProduct.title}
+Jumlah: ${qty}
+
+Total: Rp ${(selectedProduct.price * qty).toLocaleString("id-ID")}
+
+Nama:
+Alamat:
+Metode Pembayaran:
+            `;
+
+                  window.open(
+                    `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`,
+                    "_blank",
+                  );
+                }}
+                className="flex-1 bg-green-500 text-white py-2 rounded-xl"
+              >
+                ⚡ Order
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* NOTIFIKASI */}
+      {showNotif && (
+        <div className="fixed bottom-5 right-5 bg-black text-white px-4 py-2 rounded-xl shadow-lg z-50">
+          ✅ Berhasil ditambahkan ke keranjang
+        </div>
+      )}
     </main>
   );
 }

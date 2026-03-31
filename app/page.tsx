@@ -11,6 +11,7 @@ export default function EriShopWebsite() {
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [qty, setQty] = useState(1);
   const [showNotif, setShowNotif] = useState(false);
+  const [showCart, setShowCart] = useState(false);
   const images = [
     "/lukisan1.png",
     "/lukisan2.png",
@@ -163,13 +164,38 @@ export default function EriShopWebsite() {
     const data = await res.json();
     setTestimonials(data);
   };
-  const addToCart = (product: any) => {
-    setCart([...cart, product]);
-    setShowNotif(true);
+  const addToCart = (product: any, quantity: number = 1) => {
+    setCart((prev) => {
+      const existing = prev.find((item) => item.id === product.id);
 
-    setTimeout(() => {
-      setShowNotif(false);
-    }, 2000);
+      if (existing) {
+        return prev.map((item) =>
+          item.id === product.id ? { ...item, qty: item.qty + quantity } : item,
+        );
+      } else {
+        return [...prev, { ...product, qty: quantity }];
+      }
+    });
+
+    setShowNotif(true);
+    setTimeout(() => setShowNotif(false), 2000);
+  };
+
+  // 📍 TARUH DI SINI (TEPAT DI BAWAH addToCart)
+  const increaseQty = (id: number) => {
+    setCart((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, qty: item.qty + 1 } : item,
+      ),
+    );
+  };
+
+  const decreaseQty = (id: number) => {
+    setCart((prev) =>
+      prev
+        .map((item) => (item.id === id ? { ...item, qty: item.qty - 1 } : item))
+        .filter((item) => item.qty > 0),
+    );
   };
 
   const removeFromCart = (index: number) => {
@@ -189,11 +215,15 @@ export default function EriShopWebsite() {
     const productList = cart
       .map(
         (item, i) =>
-          `${i + 1}. ${item.title} - Rp ${item.price.toLocaleString("id-ID")}`,
+          `${i + 1}. ${item.title} x${item.qty}
+Rp ${(item.price * item.qty).toLocaleString("id-ID")}`,
       )
-      .join("\n");
+      .join("\n\n");
 
-    const totalPrice = cart.reduce((acc, item) => acc + item.price, 0);
+    const totalPrice = cart.reduce(
+      (acc, item) => acc + item.price * item.qty,
+      0,
+    );
 
     const message = `
 Halo ERISHOP 👋
@@ -223,25 +253,24 @@ Terima kasih 🙏
   const total = cart.reduce((acc, item) => acc + item.price, 0);
 
   return (
-    <main className="min-h-screen bg-blue-300 relative overflow-hidden">
+    <main className="min-h-screen bg-blue-300 relative overflow-x-hidden">
       {/* PUZZLE BACKGROUND */}
       <img
         src="/puzzle.png"
-        className="absolute top-0 left-0 w-53 opacity-60 brightness-125"
+        className="hidden md:block absolute top-0 left-0 w-40 opacity-30 pointer-events-none"
       />
       <img
         src="/puzzle.png"
-        className="absolute top-0 right-0 w-53 opacity-60 brightness-125"
+        className="hidden md:block absolute top-0 right-0 w-40 opacity-30 pointer-events-none"
       />
       <img
         src="/puzzle.png"
-        className="absolute bottom-0 left-0 w-53 opacity-60 brightness-125"
+        className="hidden md:block absolute bottom-0 left-0 w-40 opacity-30 pointer-events-none"
       />
       <img
         src="/puzzle.png"
-        className="absolute bottom-0 right-0 w-53 opacity-60 brightness-125"
+        className="hidden md:block absolute bottom-0 right-0 w-40 opacity-30 pointer-events-none"
       />
-
       <section className="py-20 px-6 text-center">
         <h2 className="text-4xl font-bold mb-6">Every Creation Has a Story</h2>
 
@@ -301,7 +330,7 @@ Terima kasih 🙏
           <div className="flex justify-center items-center mb-12">
             <div
               onClick={() => setSelectedImage(images[currentIndex])}
-              className="w-[320px] h-64 relative rounded-2xl overflow-hidden shadow-xl cursor-pointer group hover:scale-105 transition duration-300"
+              className="w-full max-w-[320px] h-64 relative rounded-2xl overflow-hidden shadow-xl cursor-pointer group hover:scale-105 transition duration-300"
             >
               <img
                 src={images[currentIndex]}
@@ -317,7 +346,23 @@ Terima kasih 🙏
               </div>
             </div>
           </div>
+          <section className="py-16 px-6 text-center">
+            <h3 className="text-2xl font-bold mb-4">Watch Erry’s Story</h3>
 
+            <p className="text-gray-600 text-sm max-w-md mx-auto mb-6">
+              This video features a collection of Erry’s artworks showcased
+              through various promotional campaigns—bringing each creation to
+              life with purpose and meaning.
+            </p>
+
+            <div className="max-w-xs mx-auto">
+              <video
+                src="/video.mp4"
+                controls
+                className="w-full max-w-xs mx-auto rounded-2xl shadow-md aspect-[9/16] object-cover"
+              ></video>
+            </div>
+          </section>
           {/* BOX BAWAH */}
           <div className="grid md:grid-cols-2 gap-6">
             {/* MERCH */}
@@ -352,15 +397,21 @@ Terima kasih 🙏
             Produk Erry
           </h3>
 
-          <input
-            type="text"
-            placeholder="Cari produk..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full max-w-md mx-auto block mb-10 p-3 border rounded-xl"
-          />
+          <div className="relative w-full max-w-md mx-auto mb-10">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+              🔍
+            </span>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            <input
+              type="text"
+              placeholder="Cari produk..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full pl-10 pr-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
             {filteredProducts.map((product) => (
               <div
                 key={product.id}
@@ -404,49 +455,69 @@ Terima kasih 🙏
         </div>
       </section>
 
-      {/* CART */}
-      {cart.length > 0 && (
-        <section className="bg-blue-100 py-10 px-6">
-          <div className="max-w-4xl mx-auto">
+      {/* POPUP CART */}
+      {showCart && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white w-full max-w-md max-h-[85vh] rounded-2xl p-6 relative shadow-xl animate-fadeIn flex flex-col">
+            {/* CLOSE */}
+            <button
+              onClick={() => setShowCart(false)}
+              className="absolute top-3 right-3 text-xl"
+            >
+              ✕
+            </button>
+
+            {/* TITLE */}
             <h3 className="font-semibold mb-4 flex items-center gap-2">
               <ShoppingCart size={20} />
-              Keranjang ({cart.length})
+              Cart ({cart.reduce((acc, item) => acc + item.qty, 0)})
             </h3>
 
-            {cart.map((item, index) => (
-              <div
-                key={index}
-                className="flex justify-between items-center mb-3 bg-white p-3 rounded-xl"
-              >
-                <span>
-                  {item.title} - Rp {item.price.toLocaleString("id-ID")}
-                </span>
-                <button onClick={() => removeFromCart(index)}>
-                  <Trash2 size={18} className="text-red-500" />
-                </button>
-              </div>
-            ))}
+            {/* LIST */}
+            <div className="flex-1 overflow-y-auto space-y-3 pr-2 min-h-0">
+              {cart.length === 0 ? (
+                <p className="text-gray-500 text-sm text-center">
+                  Cart is empty 😢
+                </p>
+              ) : (
+                cart.map((item, index) => (
+                  <div
+                    key={index}
+                    className="flex justify-between items-center bg-gray-100 p-3 rounded-lg"
+                  >
+                    <span className="text-sm">{item.title}</span>
 
+                    <button onClick={() => removeFromCart(index)}>
+                      <Trash2 size={16} className="text-red-500" />
+                    </button>
+                  </div>
+                ))
+              )}
+            </div>
+
+            {/* TOTAL */}
             <p className="font-bold mt-4">
               Total: Rp {total.toLocaleString("id-ID")}
             </p>
 
-            <div className="flex gap-4 mt-4">
+            {/* BUTTON */}
+            <div className="flex gap-3 mt-4">
               <button
                 onClick={checkoutWhatsApp}
-                className="bg-green-500 text-white px-6 py-2 rounded-xl"
+                className="flex-1 bg-green-500 text-white py-2 rounded-xl"
               >
-                Checkout WhatsApp
+                Checkout
               </button>
+
               <button
                 onClick={clearCart}
-                className="bg-gray-400 text-white px-6 py-2 rounded-xl"
+                className="flex-1 bg-gray-400 text-white py-2 rounded-xl"
               >
-                Kosongkan
+                Clear
               </button>
             </div>
           </div>
-        </section>
+        </div>
       )}
 
       {/* MARKETING */}
@@ -610,25 +681,30 @@ Terima kasih 🙏
                 href="https://wa.me/628124627770"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-orange-400 transition"
+                className="flex items-center gap-2 hover:text-orange-400 transition"
               >
-                  <img src="/whatsapp.png" className="w-6 h-6" /><span>WhatsApp</span>
+                <img src="/whatsapp.png" className="w-6 h-6" />
+                <span>0812-4627-770</span>
               </a>
 
               <a
                 href="mailto:erishop.art@gmail.com"
-                className="hover:text-orange-400 transition"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 hover:text-orange-400 transition"
               >
-                ✉️ Email
+                <img src="/gmail.png" className="w-6 h-6" />
+                <span>erishop.art@gmail.com</span>
               </a>
 
               <a
                 href="https://www.instagram.com/erishop.art/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-orange-400 transition"
+                className="flex items-center gap-2 hover:text-orange-400 transition"
               >
-                <img src="/instagram.png" className="w-6 h-6" /><span>Instagram</span>
+                <img src="/instagram.png" className="w-6 h-6" />
+                <span>erishop.art</span>
               </a>
             </div>
           </div>
@@ -639,6 +715,13 @@ Terima kasih 🙏
           © {new Date().getFullYear()} ERISHOP — Designed with 💛 by Erry
         </div>
       </footer>
+      {/* BUTTON CART FLOATING */}
+      <button
+        onClick={() => setShowCart(true)}
+        className="fixed bottom-5 right-5 bg-blue-500 text-white p-4 rounded-full shadow-lg z-50 hover:scale-110 transition"
+      >
+        <ShoppingCart />
+      </button>
       {/* POPUP GAMBAR */}
       {selectedImage && (
         <div
@@ -698,9 +781,7 @@ Terima kasih 🙏
             <div className="flex gap-3">
               <button
                 onClick={() => {
-                  for (let i = 0; i < qty; i++) {
-                    addToCart(selectedProduct);
-                  }
+                  addToCart(selectedProduct, qty);
                   setSelectedProduct(null);
                 }}
                 className="flex-1 bg-blue-500 text-white py-2 rounded-xl"

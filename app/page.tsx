@@ -271,7 +271,7 @@ Terima kasih 🙏
         src="/puzzle.png"
         className="hidden md:block absolute bottom-0 right-0 w-40 opacity-30 pointer-events-none"
       />
-      <section className="py-20 px-6 text-center">
+      <section id="home" className="py-20 px-6 text-center">
         <h2 className="text-4xl font-bold mb-6">Every Creation Has a Story</h2>
 
         <p className="text-black-700 max-w-2xl mx-auto leading-relaxed mb-10">

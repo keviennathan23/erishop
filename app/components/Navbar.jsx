@@ -18,13 +18,13 @@ export default function Navbar() {
         {/* Menu */}
         <div className="flex gap-6 text-sm font-medium items-center">
           <a href="#home" className="hover:text-orange-500">Home</a>
-          <a href="#karya" className="hover:text-orange-500">Karya</a>
-          <a href="#produk" className="hover:text-orange-500">Produk</a>
-          <a href="#marketing" className="hover:text-orange-500">Marketing</a>
+          <a href="#artwork" className="hover:text-orange-500">Artwork</a>
+          <a href="#products" className="hover:text-orange-500">Products</a>
+          <a href="#ourstory" className="hover:text-orange-500">Our Story</a>
 
           {/* CTA */}
           <a
-            href="#produk"
+            href="#products"
             className="bg-blue-500 text-white px-4 py-2 rounded-xl hover:bg-blue-600 transition"
           >
             Shop

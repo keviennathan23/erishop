@@ -394,7 +394,7 @@ Terima kasih 🙏
       <section id="produk" className="py-16 px-6">
         <div className="max-w-6xl mx-auto">
           <h3 className="text-2xl font-semibold text-center mb-8">
-            Product Erry
+            Merchandise Artwork
           </h3>
 
           <div className="relative w-full max-w-md mx-auto mb-10">

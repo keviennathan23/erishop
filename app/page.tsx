@@ -33,6 +33,18 @@ export default function EriShopWebsite() {
     "/lukisan18.png",
     "/lukisan19.png",
   ];
+  const customImages = [
+    "/custom design1.png",
+    "/custom design2.png",
+    "/custom design3.png",
+    "/custom design4.png",
+    "/custom design5.png",
+    "/custom design6.png",
+    "/custom design7.png",
+    "/custom design8.png",
+    "/custom design9.png",
+    "/custom design10.png",
+  ];
 
   const whatsappNumber = "628124627770";
 
@@ -108,6 +120,13 @@ export default function EriShopWebsite() {
       desc: "Eco-friendly totebag with original artwork by Erry.",
       price: 50000,
       images: ["/Totebag6.png"],
+    },
+    {
+      id: 12,
+      title: "Hoodie Enjoy Every",
+      desc: "Eco-friendly hoodie with original artwork by Erry.",
+      price: 250000,
+      images: ["/Hoodie Enjoy Every.png"],
     },
   ];
   const [testimonials, setTestimonials] = useState([
@@ -328,19 +347,43 @@ Terima kasih 🙏
 
           {/* SLIDER */}
           <div className="flex justify-center items-center mb-12">
-            <div
-              onClick={() => setSelectedImage(images[currentIndex])}
-              className="w-full max-w-[320px] h-64 relative rounded-2xl overflow-hidden shadow-xl cursor-pointer group hover:scale-105 transition duration-300"
-            >
+            <div className="relative w-full max-w-[320px] h-64 rounded-2xl overflow-hidden shadow-xl group">
+              {/* IMAGE */}
               <img
                 src={images[currentIndex]}
+                onClick={() => setSelectedImage(images[currentIndex])}
                 onError={(e) => {
                   e.currentTarget.src = "/error.png";
                 }}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover cursor-pointer"
               />
 
-              <div className="absolute inset-0 bg-black/40 flex flex-col justify-end p-4 text-white opacity-0 group-hover:opacity-100 transition">
+              {/* BUTTON KIRI */}
+              <button
+                onClick={() =>
+                  setCurrentIndex((prev) =>
+                    prev === 0 ? images.length - 1 : prev - 1,
+                  )
+                }
+                className="absolute left-3 top-1/2 -translate-y-1/2 bg-black/40 text-white px-3 py-1 rounded-full opacity-0 group-hover:opacity-100 transition"
+              >
+                ‹
+              </button>
+
+              {/* BUTTON KANAN */}
+              <button
+                onClick={() =>
+                  setCurrentIndex((prev) =>
+                    prev === images.length - 1 ? 0 : prev + 1,
+                  )
+                }
+                className="absolute right-3 top-1/2 -translate-y-1/2 bg-black/40 text-white px-3 py-1 rounded-full opacity-0 group-hover:opacity-100 transition"
+              >
+                ›
+              </button>
+
+              {/* OVERLAY */}
+              <div className="absolute inset-0 bg-black/40 flex flex-col justify-end p-4 text-white opacity-0 group-hover:opacity-100 transition pointer-events-none">
                 <h4 className="text-lg font-bold">View Artwork</h4>
                 <p className="text-sm">Click to explore 🔍</p>
               </div>
@@ -381,10 +424,56 @@ Terima kasih 🙏
             <div className="bg-white p-8 rounded-2xl shadow border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition text-center">
               <h4 className="font-semibold mb-3 text-lg">✨ Custom Design</h4>
 
-              <p className="text-sm text-gray-600 leading-relaxed">
+              <p className="text-sm text-gray-600 mb-6 leading-relaxed">
                 Personalized design services for events, communities, and
                 special occasions — crafted to match your unique identity.
               </p>
+
+              <div className="flex justify-center items-center">
+                <div className="relative w-full max-w-[300px] h-56 rounded-2xl overflow-hidden shadow-lg group">
+                  {/* IMAGE */}
+
+                  <img
+                    src={customImages[currentIndex % customImages.length]}
+                    onClick={() =>
+                      setSelectedImage(
+                        customImages[currentIndex % customImages.length],
+                      )
+                    }
+                    className="w-full h-full object-cover cursor-pointer"
+                  />
+
+                  {/* BUTTON KIRI */}
+                  <button
+                    onClick={() =>
+                      setCurrentIndex((prev) =>
+                        prev === 0 ? customImages.length - 1 : prev - 1,
+                      )
+                    }
+                    className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/40 text-white px-2 py-1 rounded-full opacity-0 group-hover:opacity-100 transition"
+                  >
+                    ‹
+                  </button>
+
+                  {/* BUTTON KANAN */}
+                  <button
+                    onClick={() =>
+                      setCurrentIndex((prev) =>
+                        prev === customImages.length - 1 ? 0 : prev + 1,
+                      )
+                    }
+                    className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/40 text-white px-2 py-1 rounded-full opacity-0 group-hover:opacity-100 transition"
+                  >
+                    ›
+                  </button>
+
+                  {/* OVERLAY */}
+                  <div className="absolute inset-0 bg-black/40 flex flex-col justify-end p-4 text-white opacity-0 group-hover:opacity-100 transition pointer-events-none">
+                    <h4 className="text-lg font-bold">Custom Design</h4>
+                    <p className="text-sm">Click to explore 🔍</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

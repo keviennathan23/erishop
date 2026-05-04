@@ -17,19 +17,20 @@ export default function EriShopWebsite() {
   const [newTitle, setNewTitle] = useState<string>("");
   const [newPrice, setNewPrice] = useState<string>("");
   const [newImage, setNewImage] = useState<string>("");
+  const [newDesc, setNewDesc] = useState<string>("");
   // ✅ HANDLE UPLOAD GAMBAR
   const handleImageUpload = (e: any) => {
-  const file = e.target.files[0];
-  if (!file) return;
+    const file = e.target.files[0];
+    if (!file) return;
 
-  const reader = new FileReader();
+    const reader = new FileReader();
 
-  reader.onloadend = () => {
-    setNewImage(reader.result as string);
+    reader.onloadend = () => {
+      setNewImage(reader.result as string);
+    };
+
+    reader.readAsDataURL(file);
   };
-
-  reader.readAsDataURL(file);
-};
 
   // ✅ TAMBAH PRODUK
   const deleteProduct = (id: number) => {
@@ -51,7 +52,7 @@ export default function EriShopWebsite() {
     const newProduct = {
       id: Date.now(),
       title: newTitle,
-      desc: "Custom product by user",
+      desc: newDesc,
       price: Number(newPrice),
       images: [newImage],
     };
@@ -60,8 +61,9 @@ export default function EriShopWebsite() {
 
     // reset form
     setNewTitle("");
-    setNewPrice(""); // ✅ string, bukan 0
+    setNewPrice("");
     setNewImage("");
+    setNewDesc(""); // ✅ ini
   };
   const images = [
     "/lukisan1.png",
@@ -214,7 +216,6 @@ export default function EriShopWebsite() {
   useEffect(() => {
     localStorage.setItem("products", JSON.stringify(products));
   }, [products]);
-
 
   //fungsi tambah testimoni
   const addTestimonial = async () => {
@@ -557,6 +558,13 @@ Terima kasih 🙏
               value={newTitle}
               onChange={(e) => setNewTitle(e.target.value)}
               className="w-full border border-gray-300 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+            <textarea
+              placeholder="Deskripsi Produk"
+              value={newDesc}
+              onChange={(e) => setNewDesc(e.target.value)}
+              className="w-full border border-gray-300 p-3 rounded-xl 
+  focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
 
             {/* INPUT HARGA */}

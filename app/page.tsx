@@ -12,6 +12,52 @@ export default function EriShopWebsite() {
   const [qty, setQty] = useState(1);
   const [showNotif, setShowNotif] = useState(false);
   const [showCart, setShowCart] = useState(false);
+
+  // ✅ FIX DI SINI
+  const [newTitle, setNewTitle] = useState<string>("");
+  const [newPrice, setNewPrice] = useState<string>("");
+  const [newImage, setNewImage] = useState<string>("");
+  // ✅ HANDLE UPLOAD GAMBAR
+  const handleImageUpload = (e: any) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const imageUrl = URL.createObjectURL(file);
+    setNewImage(imageUrl);
+  };
+
+  // ✅ TAMBAH PRODUK
+  const deleteProduct = (id: number) => {
+    const confirmDelete = confirm("Yakin mau hapus produk?");
+    if (!confirmDelete) return;
+    setProducts((prev) => prev.filter((p) => p.id !== id));
+  };
+  const addProduct = () => {
+    if (!newTitle || !newPrice || !newImage) {
+      alert("Lengkapi semua data!");
+      return;
+    }
+
+    if (isNaN(Number(newPrice))) {
+      alert("Harga harus angka!");
+      return;
+    }
+
+    const newProduct = {
+      id: Date.now(),
+      title: newTitle,
+      desc: "Custom product by user",
+      price: Number(newPrice),
+      images: [newImage],
+    };
+
+    setProducts((prev) => [...prev, newProduct]);
+
+    // reset form
+    setNewTitle("");
+    setNewPrice(""); // ✅ string, bukan 0
+    setNewImage("");
+  };
   const images = [
     "/lukisan1.png",
     "/lukisan2.png",
@@ -48,87 +94,94 @@ export default function EriShopWebsite() {
 
   const whatsappNumber = "628124627770";
 
-  const products = [
-    {
-      id: 1,
-      title: "T-shirt Love God",
-      desc: "Premium T-shirt with exclusive artwork by Erry.",
-      price: 185000,
-      images: ["/love_god.png"],
-    },
-    {
-      id: 2,
-      title: "T-shirt He Is Reason",
-      desc: "Premium T-shirt with exclusive artwork by Erry.",
-      price: 185000,
-      images: ["/he_is_reason.png"],
-    },
-    {
-      id: 3,
-      title: "T-shirt I Am Happy",
-      desc: "Premium T-shirt with exclusive artwork by Erry.",
-      price: 185000,
-      images: ["/iam_happy.png"],
-    },
-    {
-      id: 4,
-      title: "T-shirt Creation Day",
-      desc: "Premium T-shirt with exclusive artwork by Erry.",
-      price: 185000,
-      images: ["/creation_day.png"],
-    },
-    {
-      id: 5,
-      title: "T-shirt Save The Earth",
-      desc: "Premium T-shirt with exclusive artwork by Erry.",
-      price: 185000,
-      images: ["/save_the_earth.png"],
-    },
+  const [products, setProducts] = useState<any[]>(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("products");
+      if (saved) return JSON.parse(saved);
+    }
 
-    // TOTEBAG (RENAME SESUAI REQUEST)
-    {
-      id: 7,
-      title: "Sling Bag Japanese Girl",
-      desc: "Eco-friendly sling bag with original artwork by Erry.",
-      price: 250000,
-      images: ["/SlingBag2.png"],
-    },
-    {
-      id: 8,
-      title: "Sling Bag Sweet Couple",
-      desc: "Eco-friendly sling bag with original artwork by Erry.",
-      price: 250000,
-      images: ["/SlingBag1.png"],
-    },
-    {
-      id: 9,
-      title: "Totebag Cute",
-      desc: "Eco-friendly totebag with original artwork by Erry.",
-      price: 50000,
-      images: ["/Totebag4.png"],
-    },
-    {
-      id: 10,
-      title: "Totebag Do It",
-      desc: "Eco-friendly totebag with original artwork by Erry.",
-      price: 50000,
-      images: ["/Totebag5.png"],
-    },
-    {
-      id: 11,
-      title: "Totebag Never Stop Trying",
-      desc: "Eco-friendly totebag with original artwork by Erry.",
-      price: 50000,
-      images: ["/Totebag6.png"],
-    },
-    {
-      id: 12,
-      title: "Hoodie Enjoy Every",
-      desc: "Eco-friendly hoodie with original artwork by Erry.",
-      price: 250000,
-      images: ["/Hoodie Enjoy Every.png"],
-    },
-  ];
+    return [
+      {
+        id: 1,
+        title: "T-shirt Love God",
+        desc: "Premium T-shirt with exclusive artwork by Erry.",
+        price: 185000,
+        images: ["/love_god.png"],
+      },
+      {
+        id: 2,
+        title: "T-shirt He Is Reason",
+        desc: "Premium T-shirt with exclusive artwork by Erry.",
+        price: 185000,
+        images: ["/he_is_reason.png"],
+      },
+      {
+        id: 3,
+        title: "T-shirt I Am Happy",
+        desc: "Premium T-shirt with exclusive artwork by Erry.",
+        price: 185000,
+        images: ["/iam_happy.png"],
+      },
+      {
+        id: 4,
+        title: "T-shirt Creation Day",
+        desc: "Premium T-shirt with exclusive artwork by Erry.",
+        price: 185000,
+        images: ["/creation_day.png"],
+      },
+      {
+        id: 5,
+        title: "T-shirt Save The Earth",
+        desc: "Premium T-shirt with exclusive artwork by Erry.",
+        price: 185000,
+        images: ["/save_the_earth.png"],
+      },
+
+      // TOTEBAG (RENAME SESUAI REQUEST)
+      {
+        id: 7,
+        title: "Sling Bag Japanese Girl",
+        desc: "Eco-friendly sling bag with original artwork by Erry.",
+        price: 250000,
+        images: ["/SlingBag2.png"],
+      },
+      {
+        id: 8,
+        title: "Sling Bag Sweet Couple",
+        desc: "Eco-friendly sling bag with original artwork by Erry.",
+        price: 250000,
+        images: ["/SlingBag1.png"],
+      },
+      {
+        id: 9,
+        title: "Totebag Cute",
+        desc: "Eco-friendly totebag with original artwork by Erry.",
+        price: 50000,
+        images: ["/Totebag4.png"],
+      },
+      {
+        id: 10,
+        title: "Totebag Do It",
+        desc: "Eco-friendly totebag with original artwork by Erry.",
+        price: 50000,
+        images: ["/Totebag5.png"],
+      },
+      {
+        id: 11,
+        title: "Totebag Never Stop Trying",
+        desc: "Eco-friendly totebag with original artwork by Erry.",
+        price: 50000,
+        images: ["/Totebag6.png"],
+      },
+      {
+        id: 12,
+        title: "Hoodie Enjoy Every",
+        desc: "Eco-friendly hoodie with original artwork by Erry.",
+        price: 250000,
+        images: ["/Hoodie Enjoy Every.png"],
+      },
+    ];
+  });
   const [testimonials, setTestimonials] = useState([
     { name: "Andi Pratama", comment: "Kaosnya keren banget!", rating: 5 },
     { name: "Sinta Lestari", comment: "Totebagnya bagus!", rating: 4 },
@@ -143,6 +196,7 @@ export default function EriShopWebsite() {
       .then((res) => res.json())
       .then((data) => setTestimonials(data));
   }, []);
+  // slider
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
@@ -150,6 +204,19 @@ export default function EriShopWebsite() {
 
     return () => clearInterval(interval);
   }, []);
+
+  // simpan ke localStorage
+  useEffect(() => {
+    localStorage.setItem("products", JSON.stringify(products));
+  }, [products]);
+
+  useEffect(() => {
+    return () => {
+      if (newImage) {
+        URL.revokeObjectURL(newImage);
+      }
+    };
+  }, [newImage]);
 
   //fungsi tambah testimoni
   const addTestimonial = async () => {
@@ -269,7 +336,7 @@ Terima kasih 🙏
     p.title.toLowerCase().includes(search.toLowerCase()),
   );
 
-  const total = cart.reduce((acc, item) => acc + item.price, 0);
+  const total = cart.reduce((acc, item) => acc + item.price * item.qty, 0);
 
   return (
     <main className="min-h-screen bg-blue-300 relative overflow-x-hidden">
@@ -482,68 +549,132 @@ Terima kasih 🙏
       {/* PRODUK */}
       <section id="produk" className="py-16 px-6">
         <div className="max-w-6xl mx-auto">
-          <h3 className="text-2xl font-semibold text-center mb-8">
-            Merchandise Artwork
-          </h3>
+          <div className="max-w-md mx-auto mb-10 bg-white p-6 rounded-2xl shadow-lg space-y-4">
+            <h4 className="font-bold text-xl text-center">Upload Produk</h4>
 
-          <div className="relative w-full max-w-md mx-auto mb-10">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-              🔍
-            </span>
-
+            {/* INPUT NAMA */}
             <input
               type="text"
-              placeholder="Search products..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+              placeholder="Nama Produk"
+              value={newTitle}
+              onChange={(e) => setNewTitle(e.target.value)}
+              className="w-full border border-gray-300 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
-          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-            {filteredProducts.map((product) => (
-              <div
-                key={product.id}
-                className="bg-blue-50 p-6 rounded-2xl shadow"
-              >
-                <div
-                  className={`mb-4 ${
-                    product.images.length === 1 ? "" : "grid grid-cols-2 gap-2"
-                  }`}
-                >
-                  {product.images.map((img, index) => (
-                    <img
-                      key={index}
-                      src={img}
-                      className={`rounded-xl object-cover ${
-                        product.images.length === 1
-                          ? "w-full h-56"
-                          : "w-full h-40"
-                      }`}
-                    />
-                  ))}
-                </div>
-                <h4 className="font-semibold mb-2">{product.title}</h4>
-                <p className="text-sm text-gray-600 mb-2">{product.desc}</p>
-                <p className="font-bold mb-4">
-                  Rp {product.price.toLocaleString("id-ID")}
-                </p>
+            {/* INPUT HARGA */}
+            <input
+              type="number"
+              placeholder="Harga"
+              value={newPrice}
+              onChange={(e) => setNewPrice(e.target.value)}
+              className="w-full border border-gray-300 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
 
-                <button
-                  onClick={() => {
-                    setSelectedProduct(product);
-                    setQty(1);
-                  }}
-                  className="w-full bg-blue-500 text-white py-2 rounded-xl"
-                >
-                  Tambah ke Keranjang
-                </button>
-              </div>
-            ))}
+            {/* UPLOAD FILE */}
+            <label className="block">
+              <span className="text-sm text-gray-600">Upload Gambar</span>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="w-full mt-2 text-sm file:mr-4 file:py-2 file:px-4 
+                 file:rounded-xl file:border-0 
+                 file:bg-blue-500 file:text-white 
+                 hover:file:bg-blue-600 cursor-pointer"
+              />
+            </label>
+
+            {/* PREVIEW */}
+            {newImage && (
+              <img
+                src={newImage}
+                className="w-full h-40 object-cover rounded-xl border"
+              />
+            )}
+
+            {/* BUTTON */}
+            <button
+              onClick={addProduct}
+              className="w-full bg-green-500 text-white py-3 rounded-xl font-semibold 
+               hover:bg-green-600 transition transform hover:scale-[1.02]"
+            >
+              + Tambah Produk
+            </button>
           </div>
         </div>
-      </section>
+        <h3 className="text-2xl font-semibold text-center mb-8">
+          Merchandise Artwork
+        </h3>
 
+        <div className="relative w-full max-w-md mx-auto mb-10">
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+            🔍
+          </span>
+
+          <input
+            type="text"
+            placeholder="Search products..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full pl-10 pr-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+          {filteredProducts.map((product) => (
+            <div
+              key={product.id}
+              className="bg-blue-50 p-6 rounded-2xl shadow relative"
+            >
+              {/* DELETE BUTTON */}
+              <button
+                onClick={() => deleteProduct(product.id)}
+                className="absolute top-2 right-2 text-red-500 font-bold"
+              >
+                ✕
+              </button>
+
+              {/* GAMBAR */}
+              <div
+                className={`mb-4 ${
+                  product.images.length === 1 ? "" : "grid grid-cols-2 gap-2"
+                }`}
+              >
+                {product.images?.map((img: string, index: number) => (
+                  <img
+                    key={index}
+                    src={img}
+                    className={`rounded-xl object-cover ${
+                      product.images.length === 1
+                        ? "w-full h-56"
+                        : "w-full h-40"
+                    }`}
+                  />
+                ))}
+              </div>
+
+              {/* INFO */}
+              <h4 className="font-semibold mb-2">{product.title}</h4>
+              <p className="text-sm text-gray-600 mb-2">{product.desc}</p>
+
+              <p className="font-bold mb-4">
+                Rp {product.price.toLocaleString("id-ID")}
+              </p>
+
+              {/* BUTTON */}
+              <button
+                onClick={() => {
+                  setSelectedProduct(product);
+                  setQty(1);
+                }}
+                className="w-full bg-blue-500 text-white py-2 rounded-xl"
+              >
+                Tambah ke Keranjang
+              </button>
+            </div>
+          ))}
+        </div>
+      </section>
       {/* POPUP CART */}
       {showCart && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">

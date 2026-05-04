@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { ShoppingCart, Trash2 } from "lucide-react";
+import { addDoc, collection, getDocs } from "firebase/firestore";
+import { db } from "@/app/lib/firebase";
 
 export default function EriShopWebsite() {
   const [cart, setCart] = useState<any[]>([]);
@@ -38,33 +40,34 @@ export default function EriShopWebsite() {
     if (!confirmDelete) return;
     setProducts((prev) => prev.filter((p) => p.id !== id));
   };
-  const addProduct = () => {
-    if (!newTitle || !newPrice || !newImage) {
-      alert("Lengkapi semua data!");
-      return;
-    }
+  const addProduct = async () => {
+  if (!newTitle || !newPrice || !newImage) {
+    alert("Lengkapi semua data!");
+    return;
+  }
 
-    if (isNaN(Number(newPrice))) {
-      alert("Harga harus angka!");
-      return;
-    }
+  const newProduct = {
+    title: newTitle,
+    desc: newDesc,
+    price: Number(newPrice),
+    image: newImage,
+    createdAt: new Date()
+  };
 
-    const newProduct = {
-      id: Date.now(),
-      title: newTitle,
-      desc: newDesc,
-      price: Number(newPrice),
-      images: [newImage],
-    };
+  try {
+    await addDoc(collection(db, "products"), newProduct);
 
-    setProducts((prev) => [...prev, newProduct]);
+    alert("Produk berhasil disimpan ke Firebase 🔥");
 
-    // reset form
     setNewTitle("");
     setNewPrice("");
     setNewImage("");
-    setNewDesc(""); // ✅ ini
-  };
+    setNewDesc("");
+  } catch (error) {
+    console.error(error);
+    alert("Gagal simpan");
+  }
+};
   const images = [
     "/lukisan1.png",
     "/lukisan2.png",
@@ -216,6 +219,23 @@ export default function EriShopWebsite() {
   useEffect(() => {
     localStorage.setItem("products", JSON.stringify(products));
   }, [products]);
+  useEffect(() => {
+  const fetchProducts = async () => {
+    const querySnapshot = await getDocs(collection(db, "products"));
+    
+    const data: any[] = [];
+    querySnapshot.forEach((doc) => {
+      data.push({
+        id: doc.id,
+        ...doc.data()
+      });
+    });
+
+    setProducts(data);
+  };
+
+  fetchProducts();
+}, []);
 
   //fungsi tambah testimoni
   const addTestimonial = async () => {

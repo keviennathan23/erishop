@@ -19,12 +19,17 @@ export default function EriShopWebsite() {
   const [newImage, setNewImage] = useState<string>("");
   // ✅ HANDLE UPLOAD GAMBAR
   const handleImageUpload = (e: any) => {
-    const file = e.target.files[0];
-    if (!file) return;
+  const file = e.target.files[0];
+  if (!file) return;
 
-    const imageUrl = URL.createObjectURL(file);
-    setNewImage(imageUrl);
+  const reader = new FileReader();
+
+  reader.onloadend = () => {
+    setNewImage(reader.result as string);
   };
+
+  reader.readAsDataURL(file);
+};
 
   // ✅ TAMBAH PRODUK
   const deleteProduct = (id: number) => {
@@ -210,13 +215,6 @@ export default function EriShopWebsite() {
     localStorage.setItem("products", JSON.stringify(products));
   }, [products]);
 
-  useEffect(() => {
-    return () => {
-      if (newImage) {
-        URL.revokeObjectURL(newImage);
-      }
-    };
-  }, [newImage]);
 
   //fungsi tambah testimoni
   const addTestimonial = async () => {

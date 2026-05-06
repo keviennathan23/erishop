@@ -216,10 +216,13 @@ export default function EriShopWebsite() {
     .then((data) => {
       const fixed = (data || []).map((p: any) => ({
         ...p,
-        images: p.images || [], // 🔥 biar gak undefined
+        images: Array.isArray(p.images)
+          ? p.images
+          : p.image
+          ? [p.image]
+          : [],
       }));
 
-      // 🔥 gabung default + database (tanpa duplikat id)
       const merged = [...defaultProducts];
 
       fixed.forEach((item: any) => {

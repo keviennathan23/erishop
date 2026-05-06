@@ -66,7 +66,7 @@ export default function EriShopWebsite() {
         title: newTitle,
         desc: newDesc,
         price: Number(newPrice),
-        images: [newImage],
+        images: ["https://link-gambar.jpg"],
       }),
     });
 

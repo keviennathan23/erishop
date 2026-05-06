@@ -116,94 +116,87 @@ export default function EriShopWebsite() {
 
   const whatsappNumber = "628124627770";
 
-  const [products, setProducts] = useState<any[]>(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("products");
-      if (saved) return JSON.parse(saved);
-    }
+  const defaultProducts = [
+    {
+      id: 1,
+      title: "T-shirt Love God",
+      desc: "Premium T-shirt with exclusive artwork by Erry.",
+      price: 185000,
+      images: ["/love_god.png"],
+    },
+    {
+      id: 2,
+      title: "T-shirt He Is Reason",
+      desc: "Premium T-shirt with exclusive artwork by Erry.",
+      price: 185000,
+      images: ["/he_is_reason.png"],
+    },
+    {
+      id: 3,
+      title: "T-shirt I Am Happy",
+      desc: "Premium T-shirt with exclusive artwork by Erry.",
+      price: 185000,
+      images: ["/iam_happy.png"],
+    },
+    {
+      id: 4,
+      title: "T-shirt Creation Day",
+      desc: "Premium T-shirt with exclusive artwork by Erry.",
+      price: 185000,
+      images: ["/creation_day.png"],
+    },
+    {
+      id: 5,
+      title: "T-shirt Save The Earth",
+      desc: "Premium T-shirt with exclusive artwork by Erry.",
+      price: 185000,
+      images: ["/save_the_earth.png"],
+    },
 
-    return [
-      {
-        id: 1,
-        title: "T-shirt Love God",
-        desc: "Premium T-shirt with exclusive artwork by Erry.",
-        price: 185000,
-        images: ["/love_god.png"],
-      },
-      {
-        id: 2,
-        title: "T-shirt He Is Reason",
-        desc: "Premium T-shirt with exclusive artwork by Erry.",
-        price: 185000,
-        images: ["/he_is_reason.png"],
-      },
-      {
-        id: 3,
-        title: "T-shirt I Am Happy",
-        desc: "Premium T-shirt with exclusive artwork by Erry.",
-        price: 185000,
-        images: ["/iam_happy.png"],
-      },
-      {
-        id: 4,
-        title: "T-shirt Creation Day",
-        desc: "Premium T-shirt with exclusive artwork by Erry.",
-        price: 185000,
-        images: ["/creation_day.png"],
-      },
-      {
-        id: 5,
-        title: "T-shirt Save The Earth",
-        desc: "Premium T-shirt with exclusive artwork by Erry.",
-        price: 185000,
-        images: ["/save_the_earth.png"],
-      },
-
-      // TOTEBAG (RENAME SESUAI REQUEST)
-      {
-        id: 7,
-        title: "Sling Bag Japanese Girl",
-        desc: "Eco-friendly sling bag with original artwork by Erry.",
-        price: 250000,
-        images: ["/SlingBag2.png"],
-      },
-      {
-        id: 8,
-        title: "Sling Bag Sweet Couple",
-        desc: "Eco-friendly sling bag with original artwork by Erry.",
-        price: 250000,
-        images: ["/SlingBag1.png"],
-      },
-      {
-        id: 9,
-        title: "Totebag Cute",
-        desc: "Eco-friendly totebag with original artwork by Erry.",
-        price: 50000,
-        images: ["/Totebag4.png"],
-      },
-      {
-        id: 10,
-        title: "Totebag Do It",
-        desc: "Eco-friendly totebag with original artwork by Erry.",
-        price: 50000,
-        images: ["/Totebag5.png"],
-      },
-      {
-        id: 11,
-        title: "Totebag Never Stop Trying",
-        desc: "Eco-friendly totebag with original artwork by Erry.",
-        price: 50000,
-        images: ["/Totebag6.png"],
-      },
-      {
-        id: 12,
-        title: "Hoodie Enjoy Every",
-        desc: "Eco-friendly hoodie with original artwork by Erry.",
-        price: 250000,
-        images: ["/Hoodie Enjoy Every.png"],
-      },
-    ];
-  });
+    // TOTEBAG (RENAME SESUAI REQUEST)
+    {
+      id: 7,
+      title: "Sling Bag Japanese Girl",
+      desc: "Eco-friendly sling bag with original artwork by Erry.",
+      price: 250000,
+      images: ["/SlingBag2.png"],
+    },
+    {
+      id: 8,
+      title: "Sling Bag Sweet Couple",
+      desc: "Eco-friendly sling bag with original artwork by Erry.",
+      price: 250000,
+      images: ["/SlingBag1.png"],
+    },
+    {
+      id: 9,
+      title: "Totebag Cute",
+      desc: "Eco-friendly totebag with original artwork by Erry.",
+      price: 50000,
+      images: ["/Totebag4.png"],
+    },
+    {
+      id: 10,
+      title: "Totebag Do It",
+      desc: "Eco-friendly totebag with original artwork by Erry.",
+      price: 50000,
+      images: ["/Totebag5.png"],
+    },
+    {
+      id: 11,
+      title: "Totebag Never Stop Trying",
+      desc: "Eco-friendly totebag with original artwork by Erry.",
+      price: 50000,
+      images: ["/Totebag6.png"],
+    },
+    {
+      id: 12,
+      title: "Hoodie Enjoy Every",
+      desc: "Eco-friendly hoodie with original artwork by Erry.",
+      price: 250000,
+      images: ["/Hoodie Enjoy Every.png"],
+    },
+  ];
   const [testimonials, setTestimonials] = useState([
     { name: "Andi Pratama", comment: "Kaosnya keren banget!", rating: 5 },
     { name: "Sinta Lestari", comment: "Totebagnya bagus!", rating: 4 },
@@ -212,7 +205,35 @@ export default function EriShopWebsite() {
   const [name, setName] = useState("");
   const [comment, setComment] = useState("");
   const [rating, setRating] = useState(5);
+  const [products, setProducts] = useState<any[]>([]);
 
+  useEffect(() => {
+  fetch("/api/products")
+    .then((res) => {
+      if (!res.ok) throw new Error("API ERROR");
+      return res.json();
+    })
+    .then((data) => {
+      const fixed = (data || []).map((p: any) => ({
+        ...p,
+        images: p.images || [], // 🔥 biar gak undefined
+      }));
+
+      // 🔥 gabung default + database (tanpa duplikat id)
+      const merged = [...defaultProducts];
+
+      fixed.forEach((item: any) => {
+        const exists = merged.find((p) => p.id === item.id);
+        if (!exists) merged.push(item);
+      });
+
+      setProducts(merged);
+    })
+    .catch((err) => {
+      console.error("Error ambil produk:", err);
+      setProducts(defaultProducts);
+    });
+}, []);
   useEffect(() => {
     fetch("/api/testimonials")
       .then((res) => res.json())
@@ -227,11 +248,6 @@ export default function EriShopWebsite() {
     return () => clearInterval(interval);
   }, []);
 
-  useEffect(() => {
-    fetch("/api/products")
-      .then((res) => res.json())
-      .then((data) => setProducts(data));
-  }, []);
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cart));
   }, [cart]);
@@ -663,15 +679,17 @@ Terima kasih 🙏
               {/* GAMBAR */}
               <div
                 className={`mb-4 ${
-                  product.images.length === 1 ? "" : "grid grid-cols-2 gap-2"
+                  (product.images?.length || 0) === 1
+                    ? ""
+                    : "grid grid-cols-2 gap-2"
                 }`}
               >
-                {product.images?.map((img: string, index: number) => (
+                {(product.images || []).map((img: string, index: number) => (
                   <img
                     key={index}
                     src={img}
                     className={`rounded-xl object-cover ${
-                      product.images.length === 1
+                      (product.images?.length || 0) === 1
                         ? "w-full h-56"
                         : "w-full h-40"
                     }`}

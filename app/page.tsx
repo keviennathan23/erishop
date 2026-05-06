@@ -66,7 +66,7 @@ export default function EriShopWebsite() {
         title: newTitle,
         desc: newDesc,
         price: Number(newPrice),
-        image: newImage, // 🔥 FIX
+        images: [newImage],
       }),
     });
 
@@ -208,26 +208,33 @@ export default function EriShopWebsite() {
   const [products, setProducts] = useState<any[]>([]);
 
   useEffect(() => {
-    fetch("/api/products")
-      .then((res) => {
+    const loadProducts = async () => {
+      try {
+        const res = await fetch("/api/products");
+
         if (!res.ok) throw new Error("API ERROR");
-        return res.json();
-      })
-      .then((data) => {
-        const fixed = (data || []).map((p: any) => ({
+
+        const data = await res.json();
+
+        const fixedDbProducts = (data || []).map((p: any) => ({
           id: p.id,
           title: p.title,
-          desc: p.description, // 🔥 INI FIX
+          desc: p.description,
           price: p.price,
           images: p.image ? [p.image] : [],
         }));
 
-        setProducts([...defaultProducts, ...fixed]);
-      })
-      .catch((err) => {
+        // 🔥 combine aman (default + db)
+        setProducts([...defaultProducts, ...fixedDbProducts]);
+      } catch (err) {
         console.error("Error ambil produk:", err);
+
+        // fallback tetap tampil default
         setProducts(defaultProducts);
-      });
+      }
+    };
+
+    loadProducts();
   }, []);
   useEffect(() => {
     fetch("/api/testimonials")
@@ -361,9 +368,12 @@ Terima kasih 🙏
     window.open(url, "_blank");
   };
 
-  const filteredProducts = products.filter((p) =>
-    p.title.toLowerCase().includes(search.toLowerCase()),
-  );
+  const filteredProducts =
+  search.trim() === ""
+    ? products
+    : products.filter((p) =>
+        p.title?.toLowerCase().includes(search.toLowerCase())
+      );
 
   const total = cart.reduce((acc, item) => acc + item.price * item.qty, 0);
 

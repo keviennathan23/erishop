@@ -33,37 +33,52 @@ export default function EriShopWebsite() {
   };
 
   // ✅ TAMBAH PRODUK
-  const deleteProduct = (id: number) => {
-    const confirmDelete = confirm("Yakin mau hapus produk?");
+  const deleteProduct = async (id: number) => {
+    const confirmDelete = confirm("Yakin mau hapus?");
     if (!confirmDelete) return;
-    setProducts((prev) => prev.filter((p) => p.id !== id));
+
+    await fetch("/api/products", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id }),
+    });
+
+    const res = await fetch("/api/products");
+    const data = await res.json();
+    setProducts(data);
   };
-  const addProduct = () => {
+  const [loading, setLoading] = useState(false);
+
+  const addProduct = async () => {
     if (!newTitle || !newPrice || !newImage) {
       alert("Lengkapi semua data!");
       return;
     }
 
-    if (isNaN(Number(newPrice))) {
-      alert("Harga harus angka!");
-      return;
-    }
+    setLoading(true);
 
-    const newProduct = {
-      id: Date.now(),
-      title: newTitle,
-      desc: newDesc,
-      price: Number(newPrice),
-      images: [newImage],
-    };
+    await fetch("/api/products", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        title: newTitle,
+        desc: newDesc,
+        price: Number(newPrice),
+        images: [newImage],
+      }),
+    });
 
-    setProducts((prev) => [...prev, newProduct]);
+    const res = await fetch("/api/products");
+    const data = await res.json();
+    setProducts(data);
 
-    // reset form
     setNewTitle("");
     setNewPrice("");
     setNewImage("");
-    setNewDesc(""); // ✅ ini
+    setNewDesc("");
+    setLoading(false);
   };
   const images = [
     "/lukisan1.png",
@@ -212,10 +227,14 @@ export default function EriShopWebsite() {
     return () => clearInterval(interval);
   }, []);
 
-  // simpan ke localStorage
   useEffect(() => {
-    localStorage.setItem("products", JSON.stringify(products));
-  }, [products]);
+    fetch("/api/products")
+      .then((res) => res.json())
+      .then((data) => setProducts(data));
+  }, []);
+  useEffect(() => {
+    localStorage.setItem("cart", JSON.stringify(cart));
+  }, [cart]);
 
   //fungsi tambah testimoni
   const addTestimonial = async () => {
@@ -601,10 +620,11 @@ Terima kasih 🙏
             {/* BUTTON */}
             <button
               onClick={addProduct}
+              disabled={loading}
               className="w-full bg-green-500 text-white py-3 rounded-xl font-semibold 
-               hover:bg-green-600 transition transform hover:scale-[1.02]"
+  hover:bg-green-600 transition transform hover:scale-[1.02]"
             >
-              + Tambah Produk
+              {loading ? "Uploading..." : "+ Tambah Produk"}
             </button>
           </div>
         </div>

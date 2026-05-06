@@ -66,7 +66,7 @@ export default function EriShopWebsite() {
         title: newTitle,
         desc: newDesc,
         price: Number(newPrice),
-        images: [newImage],
+        image: newImage, // 🔥 FIX
       }),
     });
 
@@ -208,35 +208,27 @@ export default function EriShopWebsite() {
   const [products, setProducts] = useState<any[]>([]);
 
   useEffect(() => {
-  fetch("/api/products")
-    .then((res) => {
-      if (!res.ok) throw new Error("API ERROR");
-      return res.json();
-    })
-    .then((data) => {
-      const fixed = (data || []).map((p: any) => ({
-        ...p,
-        images: Array.isArray(p.images)
-          ? p.images
-          : p.image
-          ? [p.image]
-          : [],
-      }));
+    fetch("/api/products")
+      .then((res) => {
+        if (!res.ok) throw new Error("API ERROR");
+        return res.json();
+      })
+      .then((data) => {
+        const fixed = (data || []).map((p: any) => ({
+          id: p.id,
+          title: p.title,
+          desc: p.description, // 🔥 INI FIX
+          price: p.price,
+          images: p.image ? [p.image] : [],
+        }));
 
-      const merged = [...defaultProducts];
-
-      fixed.forEach((item: any) => {
-        const exists = merged.find((p) => p.id === item.id);
-        if (!exists) merged.push(item);
+        setProducts([...defaultProducts, ...fixed]);
+      })
+      .catch((err) => {
+        console.error("Error ambil produk:", err);
+        setProducts(defaultProducts);
       });
-
-      setProducts(merged);
-    })
-    .catch((err) => {
-      console.error("Error ambil produk:", err);
-      setProducts(defaultProducts);
-    });
-}, []);
+  }, []);
   useEffect(() => {
     fetch("/api/testimonials")
       .then((res) => res.json())

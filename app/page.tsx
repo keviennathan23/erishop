@@ -52,7 +52,7 @@ export default function EriShopWebsite() {
   const [loading, setLoading] = useState(false);
 
   const addProduct = async () => {
-    if (!newTitle || !newPrice || !newImage) {
+    if (!newTitle || !newPrice || !newImage || !newDesc) {
       alert("Lengkapi semua data!");
       return;
     }
@@ -61,23 +61,35 @@ export default function EriShopWebsite() {
 
     await fetch("/api/products", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({
         title: newTitle,
         desc: newDesc,
         price: Number(newPrice),
-        images: ["https://link-gambar.jpg"],
+        image: newImage, // ✅ FIX
       }),
     });
 
     const res = await fetch("/api/products");
     const data = await res.json();
-    setProducts(data);
+
+    const fixedDbProducts = (data || []).map((p: any) => ({
+      id: p.id,
+      title: p.title,
+      desc: p.desc,
+      price: p.price,
+      images: p.image ? [p.image] : [],
+    }));
+
+    setProducts([...defaultProducts, ...fixedDbProducts]);
 
     setNewTitle("");
     setNewPrice("");
     setNewImage("");
     setNewDesc("");
+
     setLoading(false);
   };
   const images = [
@@ -219,7 +231,7 @@ export default function EriShopWebsite() {
         const fixedDbProducts = (data || []).map((p: any) => ({
           id: p.id,
           title: p.title,
-          desc: p.description,
+          desc: p.desc,
           price: p.price,
           images: p.image ? [p.image] : [],
         }));
@@ -369,11 +381,11 @@ Terima kasih 🙏
   };
 
   const filteredProducts =
-  search.trim() === ""
-    ? products
-    : products.filter((p) =>
-        p.title?.toLowerCase().includes(search.toLowerCase())
-      );
+    search.trim() === ""
+      ? products
+      : products.filter((p) =>
+          p.title?.toLowerCase().includes(search.toLowerCase()),
+        );
 
   const total = cart.reduce((acc, item) => acc + item.price * item.qty, 0);
 

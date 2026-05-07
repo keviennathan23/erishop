@@ -1,51 +1,93 @@
 import { db } from "@/app/lib/db";
 
-// ✅ GET
+// =====================
+// ✅ GET PRODUCTS
+// =====================
 export async function GET() {
-  const [rows]: any = await db.query("SELECT * FROM products");
+  try {
+    const [rows]: any = await db.query("SELECT * FROM products");
 
-  const products = rows.map((row: any) => ({
-    ...row,
-    desc: row.description,
-    images: row.image ? [row.image] : [], // 🔥 convert ke array
-  }));
+    const products = rows.map((row: any) => ({
+      id: row.id,
+      title: row.title,
+      desc: row.description,
+      price: row.price,
+      image: row.image || "",
+    }));
 
-  return Response.json(products);
+    return Response.json(products);
+  } catch (error) {
+    console.error("GET ERROR:", error);
+
+    return Response.json(
+      { message: "Gagal ambil data" },
+      { status: 500 }
+    );
+  }
 }
 
-// ✅ POST
+// =====================
+// ✅ POST PRODUCT
+// =====================
 export async function POST(req: Request) {
-  const body = await req.json();
+  try {
+    const body = await req.json();
 
-  const { title, desc, price, images } = body;
+    const { title, desc, price, image } = body;
 
-  if (!title || !price || !images) {
+    if (!title || !desc || !price || !image) {
+      return Response.json(
+        { message: "Data tidak lengkap" },
+        { status: 400 }
+      );
+    }
+
+    await db.query(
+      "INSERT INTO products (title, description, price, image) VALUES (?, ?, ?, ?)",
+      [title, desc, price, image]
+    );
+
+    return Response.json({
+      message: "Product berhasil ditambahkan",
+    });
+  } catch (error) {
+    console.error("POST ERROR:", error);
+
     return Response.json(
-      { message: "Data tidak lengkap" },
-      { status: 400 }
+      { message: "Server error" },
+      { status: 500 }
     );
   }
-
-  await db.query(
-    "INSERT INTO products (title, description, price, image) VALUES (?, ?, ?, ?)",
-    [title, desc, price, images[0]] // 🔥 ambil 1 gambar saja
-  );
-
-  return Response.json({ message: "OK" });
 }
 
-// ✅ DELETE
+// =====================
+// ✅ DELETE PRODUCT
+// =====================
 export async function DELETE(req: Request) {
-  const { id } = await req.json();
+  try {
+    const { id } = await req.json();
 
-  if (!id) {
+    if (!id) {
+      return Response.json(
+        { message: "ID tidak ditemukan" },
+        { status: 400 }
+      );
+    }
+
+    await db.query(
+      "DELETE FROM products WHERE id = ?",
+      [id]
+    );
+
+    return Response.json({
+      message: "Product berhasil dihapus",
+    });
+  } catch (error) {
+    console.error("DELETE ERROR:", error);
+
     return Response.json(
-      { message: "ID tidak ditemukan" },
-      { status: 400 }
+      { message: "Server error" },
+      { status: 500 }
     );
   }
-
-  await db.query("DELETE FROM products WHERE id = ?", [id]);
-
-  return Response.json({ message: "Deleted" });
 }

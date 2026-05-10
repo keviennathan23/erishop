@@ -657,7 +657,6 @@ Terima kasih 🙏
               />
             )}
 
-            {/* BUTTON */}
             <button
               onClick={addProduct}
               disabled={loading}

@@ -19,25 +19,25 @@ export default function EriShopWebsite() {
   const [newImage, setNewImage] = useState<string>("");
   const [newDesc, setNewDesc] = useState<string>("");
   // ✅ HANDLE UPLOAD GAMBAR
- const handleImageUpload = (e: any) => {
-  const file = e.target.files[0];
+  const handleImageUpload = (e: any) => {
+    const file = e.target.files[0];
 
-  if (!file) return;
+    if (!file) return;
 
-  // ✅ Max 2MB
-  if (file.size > 2 * 1024 * 1024) {
-    alert("Ukuran gambar terlalu besar! Maksimal 2MB");
-    return;
-  }
+    // ✅ Max 2MB
+    if (file.size > 2 * 1024 * 1024) {
+      alert("Ukuran gambar terlalu besar! Maksimal 2MB");
+      return;
+    }
 
-  const reader = new FileReader();
+    const reader = new FileReader();
 
-  reader.onloadend = () => {
-    setNewImage(reader.result as string);
+    reader.onloadend = () => {
+      setNewImage(reader.result as string);
+    };
+
+    reader.readAsDataURL(file);
   };
-
-  reader.readAsDataURL(file);
-};
 
   // ✅ TAMBAH PRODUK
   const deleteProduct = async (id: number) => {
@@ -662,9 +662,16 @@ Terima kasih 🙏
               onClick={addProduct}
               disabled={loading}
               className="w-full bg-green-500 text-white py-3 rounded-xl font-semibold 
-  hover:bg-green-600 transition transform hover:scale-[1.02]"
+hover:bg-green-600 transition transform hover:scale-[1.02] disabled:opacity-70 flex items-center justify-center gap-2"
             >
-              {loading ? "Uploading..." : "+ Tambah Produk"}
+              {loading ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  Uploading...
+                </>
+              ) : (
+                "+ Tambah Produk"
+              )}
             </button>
           </div>
         </div>

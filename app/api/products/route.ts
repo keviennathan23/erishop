@@ -1,13 +1,24 @@
-import { db } from "@/app/lib/db";
+import { supabase } from "@/app/lib/db";
 
 // =====================
 // ✅ GET PRODUCTS
 // =====================
 export async function GET() {
   try {
-    const [rows]: any = await db.query("SELECT * FROM products");
+    const { data, error } = await supabase
+      .from("products")
+      .select("*");
 
-    const products = rows.map((row: any) => ({
+    if (error) {
+      console.error(error);
+
+      return Response.json(
+        { message: "Gagal ambil data" },
+        { status: 500 }
+      );
+    }
+
+    const products = (data || []).map((row: any) => ({
       id: row.id,
       title: row.title,
       desc: row.description,
@@ -20,7 +31,7 @@ export async function GET() {
     console.error("GET ERROR:", error);
 
     return Response.json(
-      { message: "Gagal ambil data" },
+      { message: "Server error" },
       { status: 500 }
     );
   }
@@ -33,8 +44,10 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
 
+    // ✅ FIX
     const { title, desc, price, image } = body;
 
+    // ✅ VALIDASI
     if (!title || !desc || !price || !image) {
       return Response.json(
         { message: "Data tidak lengkap" },
@@ -42,13 +55,30 @@ export async function POST(req: Request) {
       );
     }
 
-    await db.query(
-      "INSERT INTO products (title, description, price, image) VALUES (?, ?, ?, ?)",
-      [title, desc, price, image]
-    );
+    const { data, error } = await supabase
+      .from("products")
+      .insert([
+        {
+          title,
+          description: desc,
+          price,
+          image,
+        },
+      ])
+      .select();
+
+    if (error) {
+      console.error(error);
+
+      return Response.json(
+        { message: "Gagal tambah product" },
+        { status: 500 }
+      );
+    }
 
     return Response.json({
       message: "Product berhasil ditambahkan",
+      data,
     });
   } catch (error) {
     console.error("POST ERROR:", error);
@@ -74,10 +104,19 @@ export async function DELETE(req: Request) {
       );
     }
 
-    await db.query(
-      "DELETE FROM products WHERE id = ?",
-      [id]
-    );
+    const { error } = await supabase
+      .from("products")
+      .delete()
+      .eq("id", id);
+
+    if (error) {
+      console.error(error);
+
+      return Response.json(
+        { message: "Gagal hapus product" },
+        { status: 500 }
+      );
+    }
 
     return Response.json({
       message: "Product berhasil dihapus",

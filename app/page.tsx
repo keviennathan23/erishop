@@ -19,18 +19,25 @@ export default function EriShopWebsite() {
   const [newImage, setNewImage] = useState<string>("");
   const [newDesc, setNewDesc] = useState<string>("");
   // ✅ HANDLE UPLOAD GAMBAR
-  const handleImageUpload = (e: any) => {
-    const file = e.target.files[0];
-    if (!file) return;
+ const handleImageUpload = (e: any) => {
+  const file = e.target.files[0];
 
-    const reader = new FileReader();
+  if (!file) return;
 
-    reader.onloadend = () => {
-      setNewImage(reader.result as string);
-    };
+  // ✅ Max 2MB
+  if (file.size > 2 * 1024 * 1024) {
+    alert("Ukuran gambar terlalu besar! Maksimal 2MB");
+    return;
+  }
 
-    reader.readAsDataURL(file);
+  const reader = new FileReader();
+
+  reader.onloadend = () => {
+    setNewImage(reader.result as string);
   };
+
+  reader.readAsDataURL(file);
+};
 
   // ✅ TAMBAH PRODUK
   const deleteProduct = async (id: number) => {

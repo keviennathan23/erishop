@@ -90,7 +90,7 @@ export default function EriShopWebsite() {
       images: p.image ? [p.image] : [],
     }));
 
-    setProducts([...defaultProducts, ...fixedDbProducts]);
+    setProducts(fixedDbProducts);
 
     setNewTitle("");
     setNewPrice("");
@@ -135,87 +135,8 @@ export default function EriShopWebsite() {
 
   const whatsappNumber = "628124627770";
 
-  const defaultProducts = [
-    {
-      id: 1,
-      title: "T-shirt Love God",
-      desc: "Premium T-shirt with exclusive artwork by Erry.",
-      price: 185000,
-      images: ["/love_god.png"],
-    },
-    {
-      id: 2,
-      title: "T-shirt He Is Reason",
-      desc: "Premium T-shirt with exclusive artwork by Erry.",
-      price: 185000,
-      images: ["/he_is_reason.png"],
-    },
-    {
-      id: 3,
-      title: "T-shirt I Am Happy",
-      desc: "Premium T-shirt with exclusive artwork by Erry.",
-      price: 185000,
-      images: ["/iam_happy.png"],
-    },
-    {
-      id: 4,
-      title: "T-shirt Creation Day",
-      desc: "Premium T-shirt with exclusive artwork by Erry.",
-      price: 185000,
-      images: ["/creation_day.png"],
-    },
-    {
-      id: 5,
-      title: "T-shirt Save The Earth",
-      desc: "Premium T-shirt with exclusive artwork by Erry.",
-      price: 185000,
-      images: ["/save_the_earth.png"],
-    },
-
-    // TOTEBAG (RENAME SESUAI REQUEST)
-    {
-      id: 7,
-      title: "Sling Bag Japanese Girl",
-      desc: "Eco-friendly sling bag with original artwork by Erry.",
-      price: 250000,
-      images: ["/SlingBag2.png"],
-    },
-    {
-      id: 8,
-      title: "Sling Bag Sweet Couple",
-      desc: "Eco-friendly sling bag with original artwork by Erry.",
-      price: 250000,
-      images: ["/SlingBag1.png"],
-    },
-    {
-      id: 9,
-      title: "Totebag Cute",
-      desc: "Eco-friendly totebag with original artwork by Erry.",
-      price: 50000,
-      images: ["/Totebag4.png"],
-    },
-    {
-      id: 10,
-      title: "Totebag Do It",
-      desc: "Eco-friendly totebag with original artwork by Erry.",
-      price: 50000,
-      images: ["/Totebag5.png"],
-    },
-    {
-      id: 11,
-      title: "Totebag Never Stop Trying",
-      desc: "Eco-friendly totebag with original artwork by Erry.",
-      price: 50000,
-      images: ["/Totebag6.png"],
-    },
-    {
-      id: 12,
-      title: "Hoodie Enjoy Every",
-      desc: "Eco-friendly hoodie with original artwork by Erry.",
-      price: 250000,
-      images: ["/Hoodie Enjoy Every.png"],
-    },
-  ];
+  const defaultProducts: any[] = [];
+   
   const [testimonials, setTestimonials] = useState([
     { name: "Andi Pratama", comment: "Kaosnya keren banget!", rating: 5 },
     { name: "Sinta Lestari", comment: "Totebagnya bagus!", rating: 4 },
@@ -244,7 +165,7 @@ export default function EriShopWebsite() {
         }));
 
         // 🔥 combine aman (default + db)
-        setProducts([...defaultProducts, ...fixedDbProducts]);
+        setProducts(fixedDbProducts);
       } catch (err) {
         console.error("Error ambil produk:", err);
 

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { ShoppingCart, Trash2 } from "lucide-react";
+import { supabase } from "@/app/lib/supabase";
 
 export default function EriShopWebsite() {
   const [cart, setCart] = useState<any[]>([]);
@@ -42,21 +43,36 @@ export default function EriShopWebsite() {
 
   // ✅ TAMBAH PRODUK
   const deleteProduct = async (id: number) => {
-    const confirmDelete = confirm("Yakin mau hapus?");
-    if (!confirmDelete) return;
+  // ❌ kalau bukan admin
+  if (!isAdmin) {
+    alert("Akses ditolak!");
+    return;
+  }
 
-    await fetch("/api/products", {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ id }),
-    });
+  const confirmDelete = confirm("Yakin mau hapus?");
+  if (!confirmDelete) return;
 
-    const res = await fetch("/api/products");
-    const data = await res.json();
-    setProducts(data);
-  };
+  await fetch("/api/products", {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ id }),
+  });
+
+  const res = await fetch("/api/products");
+  const data = await res.json();
+
+  const fixedDbProducts = (data || []).map((p: any) => ({
+    id: p.id,
+    title: p.title,
+    desc: p.desc,
+    price: p.price,
+    images: p.image ? [p.image] : [],
+  }));
+
+  setProducts(fixedDbProducts);
+};
   const [loading, setLoading] = useState(false);
 
   const addProduct = async () => {
@@ -191,13 +207,31 @@ export default function EriShopWebsite() {
 
     return () => clearInterval(interval);
   }, []);
+  useEffect(() => {
+  const savedCart = localStorage.getItem("cart");
+
+  if (savedCart) {
+    setCart(JSON.parse(savedCart));
+  }
+}, []);
 
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cart));
   }, [cart]);
   useEffect(() => {
   const checkAdmin = async () => {
-    const res = await fetch("/api/check-admin");
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session) return;
+
+    const res = await fetch("/api/check-admin", {
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+      },
+    });
+
     const data = await res.json();
 
     setIsAdmin(data.isAdmin);
@@ -205,7 +239,6 @@ export default function EriShopWebsite() {
 
   checkAdmin();
 }, []);
-
   //fungsi tambah testimoni
   const addTestimonial = async () => {
     if (!name.trim() || !comment.trim()) return;

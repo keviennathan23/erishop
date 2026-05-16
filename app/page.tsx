@@ -224,7 +224,12 @@ export default function EriShopWebsite() {
       data: { session },
     } = await supabase.auth.getSession();
 
-    if (!session) return;
+    console.log(session);
+
+    if (!session) {
+      setIsAdmin(false);
+      return;
+    }
 
     const res = await fetch("/api/check-admin", {
       headers: {
@@ -233,6 +238,8 @@ export default function EriShopWebsite() {
     });
 
     const data = await res.json();
+
+    console.log(data);
 
     setIsAdmin(data.isAdmin);
   };

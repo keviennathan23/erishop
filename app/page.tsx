@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import { ShoppingCart, Trash2 } from "lucide-react";
-import { supabase } from "@/app/lib/supabase";
 
 export default function EriShopWebsite() {
   const [cart, setCart] = useState<any[]>([]);
@@ -13,7 +12,6 @@ export default function EriShopWebsite() {
   const [qty, setQty] = useState(1);
   const [showNotif, setShowNotif] = useState(false);
   const [showCart, setShowCart] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
 
   // ✅ FIX DI SINI
   const [newTitle, setNewTitle] = useState<string>("");
@@ -43,36 +41,21 @@ export default function EriShopWebsite() {
 
   // ✅ TAMBAH PRODUK
   const deleteProduct = async (id: number) => {
-  // ❌ kalau bukan admin
-  if (!isAdmin) {
-    alert("Akses ditolak!");
-    return;
-  }
+    const confirmDelete = confirm("Yakin mau hapus?");
+    if (!confirmDelete) return;
 
-  const confirmDelete = confirm("Yakin mau hapus?");
-  if (!confirmDelete) return;
+    await fetch("/api/products", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id }),
+    });
 
-  await fetch("/api/products", {
-    method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ id }),
-  });
-
-  const res = await fetch("/api/products");
-  const data = await res.json();
-
-  const fixedDbProducts = (data || []).map((p: any) => ({
-    id: p.id,
-    title: p.title,
-    desc: p.desc,
-    price: p.price,
-    images: p.image ? [p.image] : [],
-  }));
-
-  setProducts(fixedDbProducts);
-};
+    const res = await fetch("/api/products");
+    const data = await res.json();
+    setProducts(data);
+  };
   const [loading, setLoading] = useState(false);
 
   const addProduct = async () => {
@@ -163,7 +146,6 @@ export default function EriShopWebsite() {
   const [comment, setComment] = useState("");
   const [rating, setRating] = useState(5);
   const [products, setProducts] = useState<any[]>([]);
-  const [userEmail, setUserEmail] = useState("");
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -207,45 +189,11 @@ export default function EriShopWebsite() {
 
     return () => clearInterval(interval);
   }, []);
-  useEffect(() => {
-  const savedCart = localStorage.getItem("cart");
-
-  if (savedCart) {
-    setCart(JSON.parse(savedCart));
-  }
-}, []);
 
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cart));
   }, [cart]);
-  useEffect(() => {
-  const checkAdmin = async () => {
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
 
-    console.log(session);
-
-    if (!session) {
-      setIsAdmin(false);
-      return;
-    }
-
-    const res = await fetch("/api/check-admin", {
-      headers: {
-        Authorization: `Bearer ${session.access_token}`,
-      },
-    });
-
-    const data = await res.json();
-
-    console.log(data);
-
-    setIsAdmin(data.isAdmin);
-  };
-
-  checkAdmin();
-}, []);
   //fungsi tambah testimoni
   const addTestimonial = async () => {
     if (!name.trim() || !comment.trim()) return;
@@ -580,9 +528,7 @@ Terima kasih 🙏
       {/* PRODUK */}
       <section id="produk" className="py-16 px-6">
         <div className="max-w-6xl mx-auto">
-          {isAdmin && (
           <div className="max-w-md mx-auto mb-10 bg-white p-6 rounded-2xl shadow-lg space-y-4">
-            
             <h4 className="font-bold text-xl text-center">Upload Produk</h4>
 
             {/* INPUT NAMA */}
@@ -648,11 +594,10 @@ hover:bg-green-600 transition transform hover:scale-[1.02] disabled:opacity-70 f
               )}
             </button>
           </div>
-         )}
+        </div>
         <h3 className="text-2xl font-semibold text-center mb-8">
           Merchandise Artwork
         </h3>
-        </div>
 
         <div className="relative w-full max-w-md mx-auto mb-10">
           <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
@@ -674,15 +619,13 @@ hover:bg-green-600 transition transform hover:scale-[1.02] disabled:opacity-70 f
               key={product.id}
               className="bg-blue-50 p-6 rounded-2xl shadow relative"
             >
-             {/* DELETE BUTTON */}
-{isAdmin && (
-  <button
-    onClick={() => deleteProduct(product.id)}
-    className="absolute top-2 right-2 text-red-500 font-bold"
-  >
-    ✕
-  </button>
-)}
+              {/* DELETE BUTTON */}
+              <button
+                onClick={() => deleteProduct(product.id)}
+                className="absolute top-2 right-2 text-red-500 font-bold"
+              >
+                ✕
+              </button>
 
               {/* GAMBAR */}
               <div
@@ -883,14 +826,12 @@ hover:bg-green-600 transition transform hover:scale-[1.02] disabled:opacity-70 f
 
               <h4 className="font-semibold text-gray-800">{item.name}</h4>
 
-              {isAdmin && (
-  <button
-    onClick={() => deleteTestimonial(i)}
-    className="absolute top-2 right-2 text-red-500 font-bold"
-  >
-    ✕
-  </button>
-)}
+              <button
+                onClick={() => deleteTestimonial(i)}
+                className="absolute top-2 right-2 text-red-500 font-bold"
+              >
+                ✕
+              </button>
             </div>
           ))}
         </div>

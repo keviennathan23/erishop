@@ -1,6 +1,14 @@
 import { supabase } from "@/app/lib/db";
 
 // =====================
+// ✅ ADMIN LIST
+// =====================
+const admins = [
+  "erishop.art@gmail.com",
+  "keviennathan23@gmail.com",
+];
+
+// =====================
 // ✅ GET PRODUCTS
 // =====================
 export async function GET() {
@@ -27,6 +35,7 @@ export async function GET() {
     }));
 
     return Response.json(products);
+
   } catch (error) {
     console.error("GET ERROR:", error);
 
@@ -42,12 +51,53 @@ export async function GET() {
 // =====================
 export async function POST(req: Request) {
   try {
+
+    // =====================
+    // AUTH CHECK
+    // =====================
+    const authHeader = req.headers.get("authorization");
+
+    if (!authHeader) {
+      return Response.json(
+        { message: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
+    const token = authHeader.replace("Bearer ", "");
+
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser(token);
+
+    if (userError || !user) {
+      return Response.json(
+        { message: "User tidak valid" },
+        { status: 401 }
+      );
+    }
+
+    // =====================
+    // ADMIN CHECK
+    // =====================
+    if (!admins.includes(user.email || "")) {
+      return Response.json(
+        { message: "Bukan admin" },
+        { status: 403 }
+      );
+    }
+
+    // =====================
+    // BODY
+    // =====================
     const body = await req.json();
 
-    // ✅ FIX
     const { title, desc, price, image } = body;
 
-    // ✅ VALIDASI
+    // =====================
+    // VALIDASI
+    // =====================
     if (!title || !desc || !price || !image) {
       return Response.json(
         { message: "Data tidak lengkap" },
@@ -55,6 +105,9 @@ export async function POST(req: Request) {
       );
     }
 
+    // =====================
+    // INSERT
+    // =====================
     const { data, error } = await supabase
       .from("products")
       .insert([
@@ -80,6 +133,7 @@ export async function POST(req: Request) {
       message: "Product berhasil ditambahkan",
       data,
     });
+
   } catch (error) {
     console.error("POST ERROR:", error);
 
@@ -95,6 +149,46 @@ export async function POST(req: Request) {
 // =====================
 export async function DELETE(req: Request) {
   try {
+
+    // =====================
+    // AUTH CHECK
+    // =====================
+    const authHeader = req.headers.get("authorization");
+
+    if (!authHeader) {
+      return Response.json(
+        { message: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
+    const token = authHeader.replace("Bearer ", "");
+
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser(token);
+
+    if (userError || !user) {
+      return Response.json(
+        { message: "User tidak valid" },
+        { status: 401 }
+      );
+    }
+
+    // =====================
+    // ADMIN CHECK
+    // =====================
+    if (!admins.includes(user.email || "")) {
+      return Response.json(
+        { message: "Bukan admin" },
+        { status: 403 }
+      );
+    }
+
+    // =====================
+    // BODY
+    // =====================
     const { id } = await req.json();
 
     if (!id) {
@@ -104,6 +198,9 @@ export async function DELETE(req: Request) {
       );
     }
 
+    // =====================
+    // DELETE
+    // =====================
     const { error } = await supabase
       .from("products")
       .delete()
@@ -121,6 +218,7 @@ export async function DELETE(req: Request) {
     return Response.json({
       message: "Product berhasil dihapus",
     });
+
   } catch (error) {
     console.error("DELETE ERROR:", error);
 
